@@ -15,8 +15,9 @@ const fileName = 'previous-date.txt';
 // Read the date of the last call
 Q.fcall(() => {
   const deferred = Q.defer();
+  const fsConstants = fs.constants || fs;
 
-  fs.access(fileName, fs.constants.R_OK | fs.constants.W_OK, (err) => {
+  fs.access(fileName, fsConstants.R_OK | fsConstants.W_OK, (err) => {
     if (err) {
       const currentDate = (new Date()).toISOString();
 
