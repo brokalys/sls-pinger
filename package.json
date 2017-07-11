@@ -1,0 +1,22 @@
+{
+  "name": "pinger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/mja-lv/pinger.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/mja-lv/pinger#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "mailgun-js": "^0.11.2",
+    "mysql": "^2.13.0",
+    "q": "^1.5.0"
+  }
+}
