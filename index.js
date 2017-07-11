@@ -100,7 +100,7 @@ Q.fcall(() => {
     return;
   }
 
-  const deferred = Q.defer();
+  // const deferred = Q.defer();
 
   results.forEach((result) => {
 
@@ -124,18 +124,19 @@ Q.fcall(() => {
 
       mailgun.messages().send(data, (error, body) => {
         if (error) {
-          deferred.reject(error);
+          // deferred.reject(error);
           return;
         }
 
         console.log(body);
-        deferred.resolve();
+        // deferred.resolve(); // @todo: it should actually wait for all the emails to be sent out before resolving this promise
       });
     }
 
   });
 
-  return deferred.promise;
+  return;
+  // return deferred.promise;
 })
 
 .then(() => {
