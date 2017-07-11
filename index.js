@@ -107,7 +107,7 @@ Q.fcall(() => {
     // Mammas filtri
     if (result.type === 'rent' && 
         result.category === 'apartment' &&
-        result.rent_type === 'monthly' &&
+        (result.rent_type === 'monthly' || result.rent_type === null) &&
         result.price <= 190 &&
         result.lat >= 56.951328 &&
         result.lat <= 56.971734 &&
