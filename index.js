@@ -116,7 +116,7 @@ Q.fcall(() => {
 
       var data = {
         from: 'Brokalys <noreply@brokalys.com>',
-        to: 'kristaps.a+brokalys@gmail.com',
+        to: 'kristaps.aboltins@gmail.com',
         cc: 'matiss.ja+brokalys@gmail.com',
         subject: 'Jauns īres sludinājums mammas dzīvoklim',
         text: 'Adrese: ' + result.url
