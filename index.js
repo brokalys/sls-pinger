@@ -133,6 +133,33 @@ Q.fcall(() => {
       });
     }
 
+    // Andis & Anija
+    if (result.type === 'rent' && 
+        (result.rent_type === 'monthly' || result.rent_type === null) &&
+        result.price <= 190 &&
+        result.lat >= 56.9511452 &&
+        result.lat <= 56.988152 &&
+        result.lng >= 23.0967489 &&
+        result.lng <= 23.1990162) {
+      var data = {
+        from: 'Brokalys <noreply@brokalys.com>',
+        to: 'andis904@inbox.lv',
+        cc: 'matiss.ja+brokalys@gmail.com',
+        subject: 'Jauns īres sludinājums Tukuma mājvietai',
+        text: 'Adrese: ' + result.url
+      };
+
+      mailgun.messages().send(data, (error, body) => {
+        if (error) {
+          // deferred.reject(error);
+          return;
+        }
+
+        console.log(body);
+        // deferred.resolve(); // @todo: it should actually wait for all the emails to be sent out before resolving this promise
+      });
+    }
+
   });
 
   return;
