@@ -136,7 +136,7 @@ Q.fcall(() => {
     // Andis & Anija
     if (result.type === 'rent' && 
         (result.rent_type === 'monthly' || result.rent_type === null) &&
-        result.price <= 190 &&
+        result.price <= 180 &&
         result.lat >= 56.9511452 &&
         result.lat <= 56.988152 &&
         result.lng >= 23.0967489 &&
