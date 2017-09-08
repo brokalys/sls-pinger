@@ -9,6 +9,7 @@ const mailgun = require('mailgun-js')({
   apiKey: process.env.MAILGUN_API_KEY, 
   domain: process.env.MAILGUN_DOMAIN,
 });
+const Handlebars = require('handlebars');
 
 const fileName = 'previous-date.txt';
 
@@ -117,22 +118,34 @@ Q.fcall(() => {
   return Q.all(results.map((result) => {
     const deferred = Q.defer();
 
-    var data = {
-      from: 'Brokalys <noreply@brokalys.com>',
-      to: 'kristaps.aboltins@gmail.com',
-      cc: 'matiss.ja+brokalys@gmail.com',
-      subject: 'Jauns īres sludinājums mammas dzīvoklim',
-      text: 'Adrese: ' + result.url
-    };
-
-    mailgun.messages().send(data, (error, body) => {
-      if (error) {
-        deferred.reject(error);
+    fs.readFile('email.html', 'utf8', (err, content) => {
+      if (err) {
+        deferred.reject(err);
         return;
       }
 
-      console.log(body);
-      deferred.resolve();
+      result.content = result.content.replace(/(<([^>]+)>)/ig, "");
+
+      const template = Handlebars.compile(content);
+      const html = template(result);
+
+      var data = {
+        from: 'Brokalys <noreply@brokalys.com>',
+        to: 'kristaps.aboltins@gmail.com',
+        cc: 'matiss.ja+brokalys@gmail.com',
+        subject: 'Jauns īres sludinājums mammas dzīvoklim',
+        html,
+      };
+
+      mailgun.messages().send(data, (error, body) => {
+        if (error) {
+          deferred.reject(error);
+          return;
+        }
+
+        console.log(body);
+        deferred.resolve();
+      });
     });
 
     return deferred.promise;
