@@ -58,7 +58,21 @@ Q.fcall(() => {
 
   connection.connect();
 
-  const query = 'SELECT type, category, rent_type, lat, lng, price, url, created_at FROM `properties` WHERE created_at > ? ORDER BY created_at';
+  const query = `
+    SELECT * 
+    FROM properties 
+    WHERE created_at > ? 
+      AND type = "rent"
+      AND category = "apartment"
+      AND (rent_type = "monthly" OR rent_type IS NULL)
+      AND price <= 300
+      AND (
+        Contains(GeomFromText('POLYGON((56.94806 24.0798, 56.93907 24.09336, 56.95518 24.15087, 56.96819 24.12752, 56.94806 24.0798))'), point(lng, lat))
+        OR Contains(GeomFromText('POLYGON((56.96538 24.20769, 56.94619 24.20666, 56.95356 24.15364, 56.96718 24.14899, 56.96987 24.18468, 56.96538 24.20769))'), point(lng, lat))
+      )
+    ORDER BY created_at
+  `;
+
   connection.query(query, [date], (error, results) => {
     connection.destroy();
 
@@ -103,35 +117,23 @@ Q.fcall(() => {
   return Q.all(results.map((result) => {
     const deferred = Q.defer();
 
-    // Mammas filtri
-    if (result.type === 'rent' && 
-        result.category === 'apartment' &&
-        (result.rent_type === 'monthly' || result.rent_type === null) &&
-        result.price <= 190 &&
-        result.lat >= 56.951328 &&
-        result.lat <= 56.971734 &&
-        result.lng >= 24.135442 &&
-        result.lng <= 24.161523) {
+    var data = {
+      from: 'Brokalys <noreply@brokalys.com>',
+      to: 'kristaps.aboltins@gmail.com',
+      cc: 'matiss.ja+brokalys@gmail.com',
+      subject: 'Jauns īres sludinājums mammas dzīvoklim',
+      text: 'Adrese: ' + result.url
+    };
 
-      var data = {
-        from: 'Brokalys <noreply@brokalys.com>',
-        // to: 'kristaps.aboltins@gmail.com',
-        // cc: 'matiss.ja+brokalys@gmail.com',
-        to: 'matiss.ja+brokalys@gmail.com',
-        subject: 'Jauns īres sludinājums mammas dzīvoklim',
-        text: 'Adrese: ' + result.url
-      };
+    mailgun.messages().send(data, (error, body) => {
+      if (error) {
+        deferred.reject(error);
+        return;
+      }
 
-      mailgun.messages().send(data, (error, body) => {
-        if (error) {
-          deferred.reject(error);
-          return;
-        }
-
-        console.log(body);
-        deferred.resolve();
-      });
-    }
+      console.log(body);
+      deferred.resolve();
+    });
 
     return deferred.promise;
   }));
