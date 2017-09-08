@@ -100,9 +100,8 @@ Q.fcall(() => {
     return;
   }
 
-  // const deferred = Q.defer();
-
-  results.forEach((result) => {
+  return Q.all(results.map((result) => {
+    const deferred = Q.defer();
 
     // Mammas filtri
     if (result.type === 'rent' && 
@@ -116,27 +115,26 @@ Q.fcall(() => {
 
       var data = {
         from: 'Brokalys <noreply@brokalys.com>',
-        to: 'kristaps.aboltins@gmail.com',
-        cc: 'matiss.ja+brokalys@gmail.com',
+        // to: 'kristaps.aboltins@gmail.com',
+        // cc: 'matiss.ja+brokalys@gmail.com',
+        to: 'matiss.ja+brokalys@gmail.com',
         subject: 'Jauns īres sludinājums mammas dzīvoklim',
         text: 'Adrese: ' + result.url
       };
 
       mailgun.messages().send(data, (error, body) => {
         if (error) {
-          // deferred.reject(error);
+          deferred.reject(error);
           return;
         }
 
         console.log(body);
-        // deferred.resolve(); // @todo: it should actually wait for all the emails to be sent out before resolving this promise
+        deferred.resolve();
       });
     }
 
-  });
-
-  return;
-  // return deferred.promise;
+    return deferred.promise;
+  }));
 })
 
 .then(() => {
@@ -145,5 +143,5 @@ Q.fcall(() => {
 
 // Catch errors
 .catch((error) => {
-  console.error(error);
+  console.error('error', error);
 });
