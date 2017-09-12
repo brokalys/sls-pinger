@@ -128,6 +128,10 @@ Q.fcall(() => {
 
       result.content = result.content.toString('utf8').replace(/(<([^>]+)>)/ig, "");
 
+      if (result.images) {
+        result.images = JSON.parse(result.images);
+      }
+
       const template = Handlebars.compile(content);
       const html = template(result);
 
