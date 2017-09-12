@@ -55,6 +55,7 @@ Q.fcall(() => {
     password : process.env.DB_PASSWORD,
     database : process.env.DB_DATABASE,
     timezone : 'Z',
+    typeCast : true,
   });
 
   connection.connect();
@@ -124,7 +125,7 @@ Q.fcall(() => {
         return;
       }
 
-      result.content = result.content.replace(/(<([^>]+)>)/ig, "");
+      result.content = result.content.toString('utf8').replace(/(<([^>]+)>)/ig, "");
 
       const template = Handlebars.compile(content);
       const html = template(result);
