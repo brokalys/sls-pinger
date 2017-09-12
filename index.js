@@ -67,11 +67,12 @@ Q.fcall(() => {
       AND type = "rent"
       AND category = "apartment"
       AND (rent_type = "monthly" OR rent_type IS NULL)
+      AND (rooms >= 2 OR rooms IS NULL)
       AND price <= 300
-      AND price >= 100
+      AND price >= 180
       AND (
-        Contains(GeomFromText('POLYGON((56.94806 24.0798, 56.93907 24.09336, 56.95518 24.15087, 56.96819 24.12752, 56.94806 24.0798))'), point(lng, lat))
-        OR Contains(GeomFromText('POLYGON((56.96538 24.20769, 56.94619 24.20666, 56.95356 24.15364, 56.96718 24.14899, 56.96987 24.18468, 56.96538 24.20769))'), point(lng, lat))
+        Contains(GeomFromText('POLYGON((56.94806 24.0798, 56.93907 24.09336, 56.95518 24.15087, 56.96819 24.12752, 56.94806 24.0798))'), point(lat, lng))
+        OR Contains(GeomFromText('POLYGON((56.96538 24.20769, 56.94619 24.20666, 56.95356 24.15364, 56.96718 24.14899, 56.96987 24.18468, 56.96538 24.20769))'), point(lat, lng))
       )
     ORDER BY created_at
   `;
