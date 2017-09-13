@@ -14,10 +14,11 @@
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/mja-lv/pinger#readme",
   "dependencies": {
+    "bugsnag": "^1.12.2",
     "dotenv": "^4.0.0",
     "handlebars": "^4.0.10",
-    "mailgun-js": "^0.11.2",
-    "mysql": "^2.13.0",
+    "mailgun-js": "^0.11.3",
+    "mysql": "^2.14.1",
     "q": "^1.5.0"
   }
 }

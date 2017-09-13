@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const Q       = require('q');
 const fs      = require('fs');
+const Bugsnag = require('bugsnag');
 const Mysql   = require('mysql');
 const mailgun = require('mailgun-js')({
   apiKey: process.env.MAILGUN_API_KEY, 
@@ -12,6 +13,8 @@ const mailgun = require('mailgun-js')({
 const Handlebars = require('handlebars');
 
 const fileName = 'previous-date.txt';
+
+Bugsnag.register('76d5f4207c779acf8eea5ae606a25ca9');
 
 // Read the date of the last call
 Q.fcall(() => {
