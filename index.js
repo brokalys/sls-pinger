@@ -136,6 +136,8 @@ Q.fcall(() => {
         result.images = JSON.parse(result.images);
       }
 
+      result.url = `https://view.brokalys.com/?link=${encodeURIComponent(result.url)}`;
+
       const template = Handlebars.compile(content);
       const html = template(result);
 
