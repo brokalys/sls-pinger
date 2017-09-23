@@ -17,8 +17,9 @@
     "bugsnag": "^1.12.2",
     "dotenv": "^4.0.0",
     "handlebars": "^4.0.10",
-    "mailgun-js": "^0.11.3",
+    "mailgun-js": "^0.13.1",
     "mysql": "^2.14.1",
+    "numeral": "^2.0.6",
     "q": "^1.5.0"
   }
 }

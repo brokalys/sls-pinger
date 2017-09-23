@@ -11,6 +11,7 @@ const mailgun = require('mailgun-js')({
   domain: process.env.MAILGUN_DOMAIN,
 });
 const Handlebars = require('handlebars');
+const numeral = require('numeral');
 
 const fileName = 'previous-date.txt';
 
@@ -128,6 +129,7 @@ Q.fcall(() => {
       }
 
       result.url = `https://view.brokalys.com/?link=${encodeURIComponent(result.url)}`;
+      result.price = numeral(result.price).format('0,0 €');
 
       const template = Handlebars.compile(content);
       const html = template(result);
