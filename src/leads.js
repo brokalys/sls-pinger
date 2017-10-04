@@ -268,4 +268,5 @@ Brokalys.com aģentu menedžeris`;
 .catch((error) => {
   console.error('error', error);
   connection.destroy();
+  throw error;
 });
