@@ -220,13 +220,14 @@ Brokalys.com aģentu menedžeris`;
         text: template,
       };
 
+      console.log('data', data);
       mailgun.messages().send(data, (error, body) => {
         if (error) {
           deferred.reject(error);
           return;
         }
 
-        console.log(body);
+        console.log('body', body);
         deferred.resolve(result);
       });
 
@@ -236,6 +237,7 @@ Brokalys.com aģentu menedžeris`;
 
 // SAVE
 .then((results) => {
+  console.log('ok', results);
   return Q.all(results.map((row) => {
     const deferred = Q.defer();
 
