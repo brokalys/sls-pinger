@@ -220,7 +220,6 @@ Brokalys.com aģentu menedžeris`;
         text: template,
       };
 
-      console.log('data', data);
       mailgun.messages().send(data, (error, body) => {
         if (error) {
           deferred.reject(error);
@@ -237,16 +236,17 @@ Brokalys.com aģentu menedžeris`;
 
 // SAVE
 .then((results) => {
-  console.log('ok', results);
   return Q.all(results.map((row) => {
     const deferred = Q.defer();
+    console.log('row', row);
 
-    connection.query('INSERT INTO lead_emails SET email = ?', [row.contact_email], (error, emailCount) => {
+    connection.query('INSERT INTO lead_emails SET email = ?', [row.contact_email], (error) => {
       if (error) {
         deferred.reject(error);
         return;
       }
 
+      console.log('done', row);
       deferred.resolve(row);
     });
 
