@@ -161,12 +161,6 @@ Q.fcall(() => {
   return Q.all(results.filter((result) => result).map((result) => {
     const deferred = Q.defer();
 
-    fs.readFile('email.html', 'utf8', (err, content) => {
-      if (err) {
-        deferred.reject(err);
-        return;
-      }
-
 const sell = `
 Sveiki! Šeit Jums raksta Kristaps no Brokalys.com 
 Rakstu sakarā ar Jūsu tikko ievietoto īpašuma pārdošanas sludinājumu.
@@ -235,7 +229,6 @@ Brokalys.com aģentu menedžeris`;
         console.log(body);
         deferred.resolve(result);
       });
-    });
 
     return deferred.promise;
   }));
