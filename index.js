@@ -17,6 +17,11 @@ const fileName = 'previous-date.txt';
 
 Bugsnag.register('76d5f4207c779acf8eea5ae606a25ca9');
 
+function nl2br(str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
+
 // Read the date of the last call
 Q.fcall(() => {
   const deferred = Q.defer();
@@ -122,7 +127,7 @@ Q.fcall(() => {
         return;
       }
 
-      result.content = result.content.toString('utf8').replace(/(<([^>]+)>)/ig, "");
+      result.content = nl2br(result.content.toString('utf8').replace(/(<([^>]+)>)/ig, ""));
 
       if (result.images) {
         result.images = JSON.parse(result.images);
