@@ -17,16 +17,7 @@ const fileName = 'previous-date-leads.txt';
 
 Bugsnag.register('76d5f4207c779acf8eea5ae606a25ca9');
 
-const connection = Mysql.createConnection({
-  host     : process.env.DB_HOST,
-  user     : process.env.DB_USERNAME,
-  password : process.env.DB_PASSWORD,
-  database : process.env.DB_DATABASE,
-  timezone : 'Z',
-  typeCast : true,
-});
-
-connection.connect();
+let connection;
 
 // Read the date of the last call
 Q.fcall(() => {
@@ -87,6 +78,19 @@ Q.fcall(() => {
 })
 
 .then((results) => {
+  if (results.length > 0) {
+    connection = Mysql.createConnection({
+      host     : process.env.DB_HOST,
+      user     : process.env.DB_USERNAME,
+      password : process.env.DB_PASSWORD,
+      database : process.env.DB_DATABASE,
+      timezone : 'Z',
+      typeCast : true,
+    });
+
+    connection.connect();
+  }
+
   return Q.all(results.map((row) => {
     const deferred = Q.defer();
 
@@ -242,6 +246,7 @@ Brokalys.com aģentu menedžeris`;
 
     connection.query('INSERT INTO lead_emails SET email = ?', [row.contact_email], (error) => {
       if (error) {
+        console.log('err lead', error);
         deferred.reject(error);
         return;
       }
