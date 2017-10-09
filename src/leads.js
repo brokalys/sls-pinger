@@ -55,6 +55,17 @@ Q.fcall(() => {
 .then((date) => {
   const deferred = Q.defer();
 
+  connection = Mysql.createConnection({
+    host     : process.env.DB_HOST,
+    user     : process.env.DB_USERNAME,
+    password : process.env.DB_PASSWORD,
+    database : process.env.DB_DATABASE,
+    timezone : 'Z',
+    typeCast : true,
+  });
+
+  connection.connect();
+
   const query = `
     SELECT contact_email, type, created_at
     FROM properties 
@@ -78,19 +89,6 @@ Q.fcall(() => {
 })
 
 .then((results) => {
-  if (results.length > 0) {
-    connection = Mysql.createConnection({
-      host     : process.env.DB_HOST,
-      user     : process.env.DB_USERNAME,
-      password : process.env.DB_PASSWORD,
-      database : process.env.DB_DATABASE,
-      timezone : 'Z',
-      typeCast : true,
-    });
-
-    connection.connect();
-  }
-
   return Q.all(results.map((row) => {
     const deferred = Q.defer();
 
