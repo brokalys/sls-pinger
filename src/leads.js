@@ -67,13 +67,13 @@ Q.fcall(() => {
   connection.connect();
 
   const query = `
-    SELECT contact_email, type, created_at
+    SELECT contact_email, type, created_at, url
     FROM properties 
     WHERE created_at > ? 
     AND (contact_email LIKE "%@gmail.com" OR contact_email LIKE "%@inbox.lv")
     AND contact_email NOT LIKE "%**%"
     AND type IN ('sell', 'rent', 'buy', 'want_to_rent')
-    GROUP BY contact_email, type, created_at
+    GROUP BY contact_email, type, url, created_at
   `;
 
   connection.query(query, [date], (error, results) => {
@@ -165,7 +165,7 @@ Q.fcall(() => {
 
 const sell = `
 Sveiki! Šeit Jums raksta Kristaps no Brokalys.com 
-Rakstu sakarā ar Jūsu tikko ievietoto īpašuma pārdošanas sludinājumu.
+Rakstu sakarā ar Jūsu tikko ievietoto īpašuma pārdošanas sludinājumu (${result.url}).
 
 Skatos, ka mūsu sadarbības brokeris varētu palīdzēt atrast klientu, sagatavot līgumu un pārlecināties, ka darījums norit korekti. Sakiet, vai Jūs interesē brokeru piedāvājumi un vēlētos, lai ar Jums sazinās?
 
@@ -174,7 +174,7 @@ Brokalys.com aģentu menedžeris`;
 
 const buy = `
 Sveiki! Šeit Jums raksta Kristaps no Brokalys.com 
-Rakstu sakarā ar Jūsu tikko ievietoto nekustamā īpašuma pirkšanas sludinājumu.
+Rakstu sakarā ar Jūsu tikko ievietoto nekustamā īpašuma pirkšanas sludinājumu (${result.url}).
 
 Skatos, ka mūsu sadarbības brokerim portfelī ir īpašumi, kas atbilst Jūsu meklētajam. Sakiet, vai Jūs interesē brokeru piedāvājumi un vēlētos, lai ar Jums sazinās?
 
@@ -183,7 +183,7 @@ Brokalys.com aģentu menedžeris`;
 
 const rent = `
 Sveiki! Šeit Jums raksta Kristaps no Brokalys.com 
-Rakstu sakarā ar Jūsu tikko ievietoto īres sludinājumu.
+Rakstu sakarā ar Jūsu tikko ievietoto īres sludinājumu (${result.url}).
 
 Skatos, ka mūsu sadarbības brokeris varētu palīdzēt atrast klientu, sagatavot līgumu un pārlecināties, ka darījums norit korekti. Sakiet, vai Jūs interesē brokeru piedāvājumi un vēlētos, lai ar Jums sazinās?
 
@@ -192,7 +192,7 @@ Brokalys.com aģentu menedžeris`;
 
 const want_to_rent = `
 Sveiki! Šeit Jums raksta Kristaps no Brokalys.com 
-Rakstu sakarā ar Jūsu tikko ievietoto īres sludinājumu.
+Rakstu sakarā ar Jūsu tikko ievietoto īres sludinājumu (${result.url}).
 
 Mūsu sadarbības īres brokerim portfelī ir īpašumi, kas varētu atbilst Jūsu vajadzībām. Sakiet, vai Jūs interesē brokeru piedāvājumi un vēlētos, lai ar Jums sazinās?
 
