@@ -127,7 +127,7 @@ Q.fcall(() => {
         return;
       }
 
-      result.content = nl2br(result.content.toString('utf8').replace(/(<([^>]+)>)/ig, ""));
+      result.content = nl2br((result.content || '').toString('utf8').replace(/(<([^>]+)>)/ig, ""));
 
       if (result.images) {
         result.images = JSON.parse(result.images);
