@@ -148,7 +148,7 @@ Q.fcall(() => {
 
       var data = {
         from: 'Brokalys <noreply@brokalys.com>',
-        to: 'janis@balticreal.lv'
+        to: 'janis@balticreal.lv',
         bcc: 'matiss@brokalys.com, kristaps@brokalys.com',
         subject: '2. kategorija: Jauns PINGER sludinājums',
         html,
