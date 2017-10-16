@@ -70,8 +70,9 @@ Q.fcall(() => {
     SELECT contact_email, type, created_at, url
     FROM properties 
     WHERE created_at > ? 
-    AND (contact_email LIKE "%@gmail.com" OR contact_email LIKE "%@inbox.lv")
+    # AND (contact_email LIKE "%@gmail.com" OR contact_email LIKE "%@inbox.lv")
     AND contact_email NOT LIKE "%**%"
+    AND contact_email NOT LIKE "%..%"
     AND type IN ('sell', 'rent', 'buy', 'want_to_rent')
     GROUP BY contact_email, type, url, created_at
   `;
