@@ -13,7 +13,7 @@ const mailgun = require('mailgun-js')({
 const Handlebars = require('handlebars');
 const numeral = require('numeral');
 
-const fileName = 'previous-date-1.txt';
+const fileName = 'previous-date-4.txt';
 
 Bugsnag.register('76d5f4207c779acf8eea5ae606a25ca9');
 
