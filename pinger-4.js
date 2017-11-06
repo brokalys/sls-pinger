@@ -143,7 +143,7 @@ Q.fcall(() => {
       var data = {
         from: 'Brokalys <noreply@brokalys.com>',
         to: 'janis@balticreal.lv',
-        bcc: 'matiss@brokalys.com, kristaps@brokalys.com',
+        // bcc: 'matiss@brokalys.com, kristaps@brokalys.com',
         subject: 'Saulkrasti-Ragaciems: Jauns PINGER sludinājums',
         html,
       };
