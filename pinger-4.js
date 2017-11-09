@@ -17,6 +17,15 @@ const fileName = 'previous-date-4.txt';
 
 Bugsnag.register('76d5f4207c779acf8eea5ae606a25ca9');
 
+const connection = Mysql.createConnection({
+  host     : process.env.DB_HOST,
+  user     : process.env.DB_USERNAME,
+  password : process.env.DB_PASSWORD,
+  database : process.env.DB_DATABASE,
+  timezone : 'Z',
+  typeCast : true,
+});
+
 function nl2br(str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
@@ -57,15 +66,6 @@ Q.fcall(() => {
 // Load the properties since last call
 .then((date) => {
   const deferred = Q.defer();
-
-  const connection = Mysql.createConnection({
-    host     : process.env.DB_HOST,
-    user     : process.env.DB_USERNAME,
-    password : process.env.DB_PASSWORD,
-    database : process.env.DB_DATABASE,
-    timezone : 'Z',
-    typeCast : true,
-  });
 
   connection.connect();
 
@@ -158,7 +158,10 @@ Q.fcall(() => {
         }
 
         console.log(body);
-        deferred.resolve();
+        deferred.resolve({
+          email: data,
+          property: result,
+        });
       });
     });
 
@@ -166,11 +169,43 @@ Q.fcall(() => {
   }));
 })
 
+// Save in database
+.then((results) => {
+  if (results.length === 0) {
+    return [];
+  }
+
+  const deferred = Q.defer();
+  const query = 'INSERT INTO pinger_emails (`to`, `bcc`, `from`, `subject`, `content`, `property_id`) VALUES ?';
+
+  const data = results.map((row) => [
+    row.email.to,
+    row.email.bcc,
+    row.email.from,
+    row.email.subject,
+    row.email.html,
+    row.property.id,
+  ]);
+
+  connection.query(query, [data], (error, response) => {
+    if (error) {
+      deferred.reject(error);
+      return;
+    }
+
+    deferred.resolve(response);
+  })
+
+  return deferred.promise;
+})
+
 .then(() => {
+  connection.destroy();
   console.log('DONE. No errors.');
 })
 
 // Catch errors
 .catch((error) => {
   console.error('error', error);
+  connection.destroy();
 });
