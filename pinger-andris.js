@@ -116,7 +116,7 @@ Q.fcall(() => {
 // Send notifications
 .then((results) => {
   if (results.length === 0) {
-    return;
+    return [];
   }
 
   return Q.all(results.map((result) => {
