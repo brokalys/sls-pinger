@@ -82,8 +82,6 @@ Q.fcall(() => {
   `;
 
   connection.query(query, [date], (error, results) => {
-    connection.destroy();
-
     if (error) {
       deferred.reject(error);
       return;
