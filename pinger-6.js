@@ -48,6 +48,7 @@ Q.fcall(() => {
 
         deferred.resolve(currentDate);
       });
+      return;
     }
 
     fs.readFile(fileName, 'utf8', (err, data) => {
