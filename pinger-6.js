@@ -73,14 +73,14 @@ Q.fcall(() => {
   const query = `
     SELECT * 
     FROM properties 
-    WHERE published_at > ? 
+    WHERE created_at > ? 
       AND category = "apartment"
       AND type = "rent"
       AND (rent_type IS NULL OR rent_type = "monthly")
       AND price <= 700
       AND rooms = 4
       AND ST_Contains(ST_GeomFromText('POLYGON((56.95771 24.09787, 56.95581 24.09645, 56.95019 24.10006, 56.94602 24.10394, 56.94363 24.11091, 56.95547 24.13066, 56.95776 24.12587, 56.96241 24.11633, 56.96268 24.10593, 56.96207 24.0981, 56.95771 24.09787))'), point(lat, lng))
-    ORDER BY published_at
+    ORDER BY created_at
   `;
 
   connection.query(query, [date], (error, results) => {
@@ -98,7 +98,7 @@ Q.fcall(() => {
 // Write the date back in the file
 .then((results) => {
   const deferred = Q.defer();
-  const lastDate = results.length > 0 ? (new Date(results[results.length - 1].published_at)).toISOString() : currentDate;
+  const lastDate = results.length > 0 ? (new Date(results[results.length - 1].created_at)).toISOString() : currentDate;
 
   fs.writeFile(fileName, lastDate, (err) => {
     if (err) {
