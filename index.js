@@ -22,6 +22,8 @@ function nl2br(str, is_xhtml) {
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
+const currentDate = (new Date()).toISOString();
+
 // Read the date of the last call
 Q.fcall(() => {
   const deferred = Q.defer();
@@ -29,8 +31,6 @@ Q.fcall(() => {
 
   fs.access(fileName, fsConstants.R_OK | fsConstants.W_OK, (err) => {
     if (err) {
-      const currentDate = (new Date()).toISOString();
-
       fs.writeFile(fileName, currentDate, (err) => {
         if (err) {
           deferred.reject(err);
@@ -91,12 +91,8 @@ Q.fcall(() => {
 
 // Write the date back in the file
 .then((results) => {
-  if (results.length === 0) {
-    return results;
-  }
-
   const deferred = Q.defer();
-  const lastDate = (new Date(results[results.length - 1].created_at)).toISOString();
+  const lastDate = results.length > 0 ? (new Date(results[results.length - 1].created_at)).toISOString() : currentDate;
 
   fs.writeFile(fileName, lastDate, (err) => {
     if (err) {
