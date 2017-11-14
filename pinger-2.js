@@ -100,7 +100,7 @@ Q.fcall(() => {
 // Write the date back in the file
 .then((results) => {
   const deferred = Q.defer();
-  const lastDate = results.length > 0 ? (new Date(results[results.length - 1].created_at)).toISOString() : currentDate;
+  const lastDate = results.length > 0 ? (new Date(results[results.length - 1].published_at)).toISOString() : currentDate;
 
   fs.writeFile(fileName, lastDate, (err) => {
     if (err) {
