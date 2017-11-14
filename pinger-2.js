@@ -72,7 +72,7 @@ Q.fcall(() => {
   const query = `
     SELECT * 
     FROM properties 
-    WHERE created_at > ? 
+    WHERE published_at > ? 
       AND category = "apartment"
       AND type = "sell"
       AND floor >= 2
@@ -81,7 +81,7 @@ Q.fcall(() => {
       AND area <= 35
       AND price >= 40000 AND price <= 70000
       AND ST_Contains(ST_GeomFromText('POLYGON((56.96388 24.07499, 56.95499 24.07499, 56.95087 24.07671, 56.94694 24.08134, 56.9416 24.08684, 56.93261 24.09044, 56.92259 24.07413, 56.92389 24.05964, 56.93018 24.04993, 56.93861 24.04478, 56.94923 24.04136, 56.95321 24.04015, 56.95972 24.03998, 56.96331 24.04373, 56.969 24.04614, 56.9738 24.04924, 56.97689 24.05714, 56.97642 24.06641, 56.97221 24.07207, 56.96987 24.07671, 56.96285 24.07585, 56.96388 24.07499))'), point(lat, lng))
-  ORDER BY created_at
+  ORDER BY published_at
   `;
 
   connection.query(query, [date], (error, results) => {

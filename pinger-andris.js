@@ -72,12 +72,12 @@ Q.fcall(() => {
   const query = `
     SELECT * 
     FROM properties 
-    WHERE created_at > ? 
+    WHERE published_at > ? 
       AND category = "garage"
       AND type = "sell"
       AND price >= 10000
       AND ST_Contains(ST_GeomFromText('POLYGON((57.00747 24.05457, 56.9856 24.0015, 56.95791 23.9916, 56.9431 23.98727, 56.92549 23.98384, 56.91612 24.00169, 56.90338 24.05937, 56.89625 24.09714, 56.897 24.12872, 56.90563 24.15688, 56.91388 24.17816, 56.92774 24.20563, 56.94643 24.22755, 56.9622 24.23447, 56.98504 24.21554, 57.00583 24.15522, 57.00747 24.05457))'), point(lat, lng))
-    ORDER BY created_at
+    ORDER BY published_at
   `;
 
   connection.query(query, [date], (error, results) => {

@@ -72,7 +72,7 @@ Q.fcall(() => {
   const query = `
     SELECT * 
     FROM properties 
-    WHERE created_at > ?
+    WHERE published_at > ?
       AND type = "sell"
       AND (
         ST_Contains(ST_GeomFromText('POLYGON((56.69093 23.79364, 56.68548 23.79178, 56.68226 23.80394, 56.68972 23.81005, 56.69269 23.80091, 56.69093 23.79364))'), point(lat, lng))
@@ -97,7 +97,7 @@ Q.fcall(() => {
       OR ST_Contains(ST_GeomFromText('POLYGON((56.68745 23.71141, 56.6891 23.71785, 56.68994 23.72257, 56.69296 23.72703, 56.69993 23.746, 56.70337 23.75905, 56.70441 23.7769, 56.70361 23.78729, 56.69776 23.75642, 56.69564 23.75181, 56.68692 23.72084, 56.68745 23.71141))'), point(lat, lng))
       OR ST_Contains(ST_GeomFromText('POLYGON((56.69499 23.79905, 56.69631 23.79484, 56.69433 23.79132, 56.69178 23.79398, 56.69298 23.80354, 56.69499 23.79905))'), point(lat, lng))
       )
-    ORDER BY created_at
+    ORDER BY published_at
   `;
 
   connection.query(query, [date], (error, results) => {
