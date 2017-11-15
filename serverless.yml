@@ -23,3 +23,8 @@ functions:
     handler: src/pinger.run
     events:
       - sns: pinger
+
+  skrape:
+    handler: src/skrape.run
+    events:
+      - schedule: rate(3 minutes)
