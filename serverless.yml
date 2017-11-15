@@ -1,0 +1,25 @@
+service: brokalys-pinger
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs6.10
+  timeout: 3
+  cfLogs: true
+  versionFunctions: false
+  environment: ${file(serverless.env.yml)}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - SNS:Publish
+      Resource: "arn:aws:sns:eu-west-1:*:*"
+
+functions:
+  init:
+    handler: src/init.run
+    events:
+      - schedule: rate(5 minutes)
+  pinger:
+    handler: src/pinger.run
+    events:
+      - sns: pinger
