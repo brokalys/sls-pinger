@@ -26,5 +26,6 @@ functions:
 
   skrape:
     handler: src/skrape.run
+    timeout: 60
     events:
       - schedule: rate(3 minutes)
