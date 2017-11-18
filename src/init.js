@@ -12,18 +12,6 @@ AWS.config.update({ region: process.env.AWS_REGION });
 module.exports.run = (event, context, callback) => {
 
   const pingers = [{
-    id: 4, // Andris
-    query: `
-      SELECT * 
-      FROM properties 
-      WHERE created_at > ? 
-        AND category = "garage"
-        AND type = "sell"
-        AND price >= 10000
-        AND ST_Contains(ST_GeomFromText('POLYGON((57.00747 24.05457, 56.9856 24.0015, 56.95791 23.9916, 56.9431 23.98727, 56.92549 23.98384, 56.91612 24.00169, 56.90338 24.05937, 56.89625 24.09714, 56.897 24.12872, 56.90563 24.15688, 56.91388 24.17816, 56.92774 24.20563, 56.94643 24.22755, 56.9622 24.23447, 56.98504 24.21554, 57.00583 24.15522, 57.00747 24.05457))'), point(lat, lng))
-      ORDER BY created_at
-    `,
-  }, {
     id: 5, // 1. Pingeris
     query: `
       SELECT * 
@@ -186,7 +174,7 @@ module.exports.run = (event, context, callback) => {
 
     connection.connect();
 
-    connection.query('SELECT * FROM pinger_emails WHERE id = ? AND unsubscribed_at IS NULL', [2], (error, results) => {
+    connection.query('SELECT * FROM pinger_emails WHERE id IN (2, 4) AND unsubscribed_at IS NULL', (error, results) => {
       connection.end();
       if (error) {
         deferred.reject(error);
@@ -198,16 +186,18 @@ module.exports.run = (event, context, callback) => {
         return;
       }
 
-      try {
-        const newPing = {
-          id: results[0].id,
-          query: buildQuery(results[0]),
-        };
+      results.forEach((result) => {
+        try {
+          const newPing = {
+            id: result.id,
+            query: buildQuery(result),
+          };
 
-        pingers.push(newPing);
-      } catch (e) {
-        console.error('Failed constructing pinger', e);
-      }
+          pingers.push(newPing);
+        } catch (e) {
+          console.error('Failed constructing pinger', e);
+        }
+      });
 
       deferred.resolve(pingers);
       console.log(pingers);
