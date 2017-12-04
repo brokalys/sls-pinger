@@ -28,4 +28,4 @@ functions:
     handler: src/skrape.run
     timeout: 60
     events:
-      - schedule: rate(3 minutes)
+      - schedule: cron(*/3 0-3 * * *)
