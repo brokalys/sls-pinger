@@ -24,8 +24,8 @@ functions:
     events:
       - sns: pinger
 
-  skrape:
-    handler: src/skrape.run
-    timeout: 60
-    events:
-      - schedule: cron(*/3 0-3 * * *)
+  # skrape:
+  #   handler: src/skrape.run
+  #   timeout: 60
+  #   events:
+  #     - schedule: cron(*/3 0-3 * * *)
