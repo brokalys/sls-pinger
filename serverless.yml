@@ -3,7 +3,7 @@ service: brokalys-pinger
 provider:
   name: aws
   region: eu-west-1
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   timeout: 3
   cfLogs: true
   versionFunctions: false
@@ -23,9 +23,3 @@ functions:
     handler: src/pinger.run
     events:
       - sns: pinger
-
-  # skrape:
-  #   handler: src/skrape.run
-  #   timeout: 60
-  #   events:
-  #     - schedule: cron(*/3 0-3 * * *)
