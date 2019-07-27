@@ -18,7 +18,6 @@ function nl2br(str, is_xhtml) {
 }
 
 module.exports.run = (event, context, callback) => {
-  let email;
   const mainQuery = event.Records[0].Sns.MessageAttributes.query.Value;
   const id = event.Records[0].Sns.MessageAttributes.id.Value;
 
@@ -48,7 +47,7 @@ module.exports.run = (event, context, callback) => {
   Q.fcall(() => {
     const deferred = Q.defer();
 
-    connection.query('SELECT last_check_at, email FROM pinger_emails WHERE id = ?', [id], (error, results) => {
+    connection.query('SELECT * FROM pinger_emails WHERE id = ?', [id], (error, results) => {
       if (error) {
         deferred.reject(error);
         return;
@@ -59,33 +58,32 @@ module.exports.run = (event, context, callback) => {
         return;
       }
 
-      email = results[0].email;
-      deferred.resolve(results[0].last_check_at);
+      deferred.resolve(results[0]);
     });
 
     return deferred.promise;
   })
 
   // Load the properties since last call
-  .then((date) => {
+  .then((pinger) => {
     const deferred = Q.defer();
 
     connectionProperties.connect();
-    connectionProperties.query(mainQuery, [date], (error, results) => {
+    connectionProperties.query(mainQuery, [pinger.last_check_at], (error, results) => {
       connectionProperties.end();
       if (error) {
         deferred.reject(error);
         return;
       }
 
-      deferred.resolve(results);
+      deferred.resolve({ results, pinger });
     });
 
     return deferred.promise;
   })
 
   // Write the date back in the file
-  .then((properties) => {
+  .then(({ results, pinger }) => {
     const deferred = Q.defer();
     const lastDate = currentDate.replace('T', ' ').replace('Z', '');
 
@@ -95,14 +93,14 @@ module.exports.run = (event, context, callback) => {
         return;
       }
 
-      deferred.resolve(properties);
+      deferred.resolve({ results, pinger });
     });
 
     return deferred.promise;
   })
 
   // Send notifications
-  .then((results) => {
+  .then(({ results, pinger }) => {
     if (results.length === 0) {
       return [];
     }
@@ -122,6 +120,7 @@ module.exports.run = (event, context, callback) => {
           result.images = JSON.parse(result.images);
         }
 
+        result.unsubscribe_url = `https://unsubscribe.brokalys.com/?key=${encodeURIComponent(pinger.unsubscribe_key)}&id=${encodeURIComponent(pinger.id)}`;
         result.url = `https://view.brokalys.com/?link=${encodeURIComponent(result.url)}`;
         result.price = numeral(result.price).format('0,0 €');
 
@@ -130,7 +129,7 @@ module.exports.run = (event, context, callback) => {
 
         var data = {
           from: 'Brokalys <noreply@brokalys.com>',
-          to: email,
+          to: pinger.email,
           subject: 'Jauns PINGER sludinājums',
           html,
         };
