@@ -87,7 +87,7 @@ module.exports.run = (event, context, callback) => {
     const deferred = Q.defer();
     const lastDate = currentDate.replace('T', ' ').replace('Z', '');
 
-    connection.query('UPDATE pinger_emails SET last_check_at = ? WHERE id = ?', [lastDate, id], (error, results) => {
+    connection.query('UPDATE pinger_emails SET last_check_at = ? WHERE id = ?', [lastDate, id], (error) => {
       if (error) {
         deferred.reject(error);
         return;
