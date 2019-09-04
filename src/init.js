@@ -27,11 +27,15 @@ module.exports.run = (event, context, callback) => {
       SELECT * 
       FROM properties 
       WHERE created_at > ? 
-       ${ ping.categories ? `AND category IN ("${ JSON.parse(ping.categories).join(',"') }")` : '' }
+       ${ ping.categories ? `AND category IN ("${ JSON.parse(ping.categories).join('","') }")` : '' }
        ${ ping.types ? `AND type IN ("${ JSON.parse(ping.types).join('","') }")` : '' }
-       ${ JSON.parse(ping.types || '[]').indexOf('rent') >= 0 ? 'AND (rent_type IS NULL OR rent_type = "monthly")' : '' }
+       ${ ping.types && JSON.parse(ping.types).indexOf('rent') >= 0 ? 'AND (rent_type IS NULL OR rent_type = "monthly")' : '' }
        ${ ping.price_min > 0 ? `AND price >= ${ping.price_min}` : '' }
        ${ ping.price_max > 0 ? `AND price <= ${ping.price_max}` : '' }
+       ${ ping.rooms_min > 0 ? `AND rooms >= ${ping.rooms_min}` : '' }
+       ${ ping.rooms_max > 0 ? `AND rooms <= ${ping.rooms_max}` : '' }
+       ${ ping.area_m2_min > 0 ? `AND (area >= ${ping.area_m2_min} AND area_measurement = "m2" OR area_measurement != "m2")` : '' }
+       ${ ping.area_m2_max > 0 ? `AND (area <= ${ping.area_m2_max} AND area_measurement = "m2" OR area_measurement != "m2")` : '' }
        ${ ping.additional ? `AND ${ping.additional}` : '' }
        ${ ping.location ? `AND ST_Contains(ST_GeomFromText('POLYGON((${ ping.location }))'), point(lat, lng))` : '' }
       ORDER BY created_at
