@@ -66,6 +66,11 @@ module.exports.run = (event, context, callback) => {
 
   // Load the properties since last call
   .then((pinger) => {
+    // If this is a newly created pinger..
+    if (pinger.last_check_at === null) {
+      return { pinger, results: [] };
+    }
+
     const deferred = Q.defer();
 
     connectionProperties.connect();
