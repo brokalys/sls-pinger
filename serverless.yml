@@ -3,7 +3,7 @@ service: brokalys-pinger
 provider:
   name: aws
   region: eu-west-1
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   timeout: 3
   cfLogs: true
   versionFunctions: false
