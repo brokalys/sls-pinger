@@ -1,7 +1,3 @@
-'use strict';
-
-require('dotenv').config();
-
 const fs = require('fs');
 const serverlessMysql = require('serverless-mysql');
 const mailgun = require('mailgun-js')({

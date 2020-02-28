@@ -1,7 +1,3 @@
-'use strict';
-
-require('dotenv').config();
-
 const serverlessMysql = require('serverless-mysql');
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS({apiVersion: '2010-03-31'});
