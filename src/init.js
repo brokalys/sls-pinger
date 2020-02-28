@@ -18,8 +18,6 @@ const connection = serverlessMysql({
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const pingers = [];
-
   const buildQuery = (ping) => {
     return `
       SELECT *
@@ -42,30 +40,17 @@ exports.run = async (event, context, callback) => {
 
   const results = await connection.query('SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1');
 
-  results.forEach((result) => {
-    try {
-      const newPing = {
-        id: result.id,
-        query: buildQuery(result),
-      };
-
-      pingers.push(newPing);
-    } catch (e) {
-      console.error('Failed constructing pinger', e);
-    }
-  });
-
-  await Promise.all(pingers.map(async (pinger) => {
+  await Promise.all(results.map(async (result) => {
     await sns.publish({
       Message: 'ping',
       MessageAttributes: {
         query: {
           DataType: 'String',
-          StringValue: pinger.query,
+          StringValue: buildQuery(result),
         },
         id: {
           DataType: 'String',
-          StringValue: '' + pinger.id,
+          StringValue: String(result.id),
         },
       },
       MessageStructure: 'string',
@@ -75,5 +60,5 @@ exports.run = async (event, context, callback) => {
     return Promise.resolve();
   }));
 
-  callback(null, `Invoked ${pingers.length} item-crawlers.`);
+  callback(null, `Invoked ${results.length} item-crawlers.`);
 };
