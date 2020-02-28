@@ -3,12 +3,10 @@ pipelines:
   branches:
     master:
       - step:
-          script:
-            - yarn
-      - step:
           name: Publish
           deployment: production
           script:
+            - yarn
             - pipe: atlassian/serverless-deploy:0.1.3
               variables:
                 DB_HOST: $DB_HOST
