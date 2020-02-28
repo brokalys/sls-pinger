@@ -14,8 +14,6 @@ provider:
       DB_PROPERTIES_DATABASE: ${env:DB_PROPERTIES_DATABASE}
       MAILGUN_API_KEY: ${env:MAILGUN_API_KEY}
       MAILGUN_DOMAIN: ${env:MAILGUN_DOMAIN}
-      AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
   iamRoleStatements:
     - Effect: Allow
       Action:
