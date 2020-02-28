@@ -12,6 +12,7 @@ pipelines:
                 DB_HOST: $DB_HOST
                 DB_DATABASE: $DB_DATABASE
                 DB_USERNAME: $DB_USERNAME
+                DB_PASSWORD: $DB_PASSWORD
                 DB_PROPERTIES_DATABASE: $DB_PROPERTIES_DATABASE
                 MAILGUN_API_KEY: $MAILGUN_API_KEY
                 MAILGUN_DOMAIN: $MAILGUN_DOMAIN
