@@ -7,7 +7,6 @@ provider:
   timeout: 3
   cfLogs: true
   versionFunctions: false
-  environment: ${file(serverless.env.yml)}
   iamRoleStatements:
     - Effect: Allow
       Action:
