@@ -34,7 +34,7 @@ custom:
   alerts:
     topics:
       alarm:
-        topic: ${self:service}-${opt:stage}-critical-alerts-alarm
+        topic: ${self:service}-alerts-alarm
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com
