@@ -3,8 +3,6 @@ pipelines:
   branches:
     master:
       - step:
-          caches:
-            - node
           script:
             - yarn
       - step:
