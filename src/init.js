@@ -2,31 +2,33 @@
 
 require('dotenv').config();
 
-const AWS   = require('aws-sdk');
-const Mysql = require('mysql');
-const Q     = require('q');
-const sns   = new AWS.SNS({apiVersion: '2010-03-31'});
+const serverlessMysql = require('serverless-mysql');
+const AWS = require('aws-sdk');
+const sns = new AWS.SNS({apiVersion: '2010-03-31'});
 
 AWS.config.update({ region: process.env.AWS_REGION });
 
-module.exports.run = (event, context, callback) => {
-
-  const pingers = [];
-
-  const connection = Mysql.createConnection({
+const connection = serverlessMysql({
+  config: {
     host     : process.env.DB_HOST,
     user     : process.env.DB_USERNAME,
     password : process.env.DB_PASSWORD,
     database : process.env.DB_DATABASE,
     timezone : 'Z',
     typeCast : true,
-  });
+  },
+});
+
+exports.run = async (event, context, callback) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  const pingers = [];
 
   const buildQuery = (ping) => {
     return `
-      SELECT * 
-      FROM properties 
-      WHERE created_at > ? 
+      SELECT *
+      FROM properties
+      WHERE created_at > ?
        ${ ping.categories ? `AND category IN ("${ JSON.parse(ping.categories).join('","') }")` : '' }
        ${ ping.types ? `AND type IN ("${ JSON.parse(ping.types).join('","') }")` : '' }
        ${ ping.types && JSON.parse(ping.types).indexOf('rent') >= 0 ? 'AND (rent_type IS NULL OR rent_type = "monthly")' : '' }
@@ -42,48 +44,23 @@ module.exports.run = (event, context, callback) => {
     `;
   };
 
-  Q.fcall(() => {
-    const deferred = Q.defer();
+  const results = await connection.query('SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1');
 
-    connection.connect();
+  results.forEach((result) => {
+    try {
+      const newPing = {
+        id: result.id,
+        query: buildQuery(result),
+      };
 
-    connection.query('SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1', (error, results) => {
-      connection.end();
-      if (error) {
-        deferred.reject(error);
-        return;
-      }
+      pingers.push(newPing);
+    } catch (e) {
+      console.error('Failed constructing pinger', e);
+    }
+  });
 
-      if (results.length < 1) {
-        deferred.reject(results);
-        return;
-      }
-
-      results.forEach((result) => {
-        try {
-          const newPing = {
-            id: result.id,
-            query: buildQuery(result),
-          };
-
-          pingers.push(newPing);
-        } catch (e) {
-          console.error('Failed constructing pinger', e);
-        }
-      });
-
-      deferred.resolve(pingers);
-      console.log(pingers);
-    });
-
-    return deferred.promise;
-  })
-
-  // Invoke all
-  .then((pingers) => pingers.map(pinger => {
-    const deferred = Q.defer();
-
-    sns.publish({
+  await Promise.all(pingers.map(async (pinger) => {
+    await sns.publish({
       Message: 'ping',
       MessageAttributes: {
         query: {
@@ -97,25 +74,10 @@ module.exports.run = (event, context, callback) => {
       },
       MessageStructure: 'string',
       TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger'
-    }, (error, data) => {
-      if (error) {
-        deferred.reject(error);
-        return;
-      }
-
-      deferred.resolve();
     });
 
-    return deferred.promise;
-  }))
+    return Promise.resolve();
+  }));
 
-  // Success
-  .then(matches => {
-    callback(null, `Invoked ${matches.length} item-crawlers.`);
-  })
-
-  // Error
-  .catch(reason => {
-    callback(reason);
-  });
+  callback(null, `Invoked ${pingers.length} item-crawlers.`);
 };
