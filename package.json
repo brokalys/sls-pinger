@@ -21,6 +21,7 @@
     "mysql": "^2.14.1",
     "numeral": "^2.0.6",
     "q": "^1.5.0",
-    "serverless-plugin-aws-alerts": "^1.4.0"
+    "serverless-plugin-aws-alerts": "^1.4.0",
+    "serverless-plugin-tracing": "^2.0.0"
   }
 }
