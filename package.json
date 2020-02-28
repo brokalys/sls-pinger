@@ -17,11 +17,11 @@
     "aws-sdk": "^2.151.0",
     "handlebars": "^4.0.10",
     "mailgun-js": "^0.22.0",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "serverless-mysql": "^1.5.3"
   },
   "devDependencies": {
     "serverless": "^1.65.0",
-    "serverless-mysql": "^1.5.3",
     "serverless-plugin-aws-alerts": "^1.4.0",
     "serverless-plugin-tracing": "^2.0.0"
   }
