@@ -347,7 +347,7 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lodash@^4.17.14:
+lodash@^4.17.10, lodash@^4.17.14:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
@@ -581,6 +581,13 @@ sax@>=0.6.0:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
+
+serverless-plugin-aws-alerts@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-aws-alerts/-/serverless-plugin-aws-alerts-1.4.0.tgz#648b7a733c9d5e97e56fa46540091d81feba738e"
+  integrity sha512-4ChkFVVi3X4NeqgdxAhaVha8LnXrH8kadMm5iV1TMyOr/zNdjo9NoRCLnHkspODO4f2uqwlEiMuh9yUrT6s7PA==
+  dependencies:
+    lodash "^4.17.10"
 
 setprototypeof@1.1.1:
   version "1.1.1"

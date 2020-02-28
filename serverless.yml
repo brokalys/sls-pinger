@@ -31,3 +31,20 @@ functions:
     handler: src/pinger.run
     events:
       - sns: pinger
+
+custom:
+  alerts:
+    topics:
+      alarm:
+        topic: ${self:service}-${opt:stage}-critical-alerts-alarm
+        notifications:
+          - protocol: email
+            endpoint: matiss@brokalys.com
+    alarms:
+      - functionThrottles
+      - functionErrors
+      - functionInvocations
+      - functionDuration
+
+plugins:
+  - serverless-plugin-aws-alerts
