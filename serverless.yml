@@ -37,6 +37,13 @@ functions:
     handler: src/pinger.run
     events:
       - sns: pinger
+    alarms:
+      functionErrors:
+        treatMissingData: notBreaching
+      functionInvocations:
+        statistic: Average
+        period: 86400 # 1 day
+        treatMissingData: breaching
 
 custom:
   alerts:
@@ -46,14 +53,9 @@ custom:
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com
-    definitions:
-      functionDuration:
-        period: 300 # 5 minutes
     alarms:
-      - functionThrottles
       - functionErrors
       - functionInvocations
-      - functionDuration
 
 plugins:
   - serverless-plugin-aws-alerts
