@@ -33,16 +33,33 @@ functions:
     handler: src/init.run
     events:
       - schedule: rate(5 minutes)
+    alarms:
+      - functionErrors
+      - functionInvocations
   pinger:
     handler: src/pinger.run
     events:
       - sns: pinger
     alarms:
-      functionErrors:
+      - name: pingerErrors
+        namespace: 'AWS/Lambda'
+        metric: Errors
+        threshold: 1
+        statistic: Sum
+        period: 60
+        evaluationPeriods: 1
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
-      functionInvocations:
+      - name: pingerInvocations
+        namespace: 'AWS/Lambda'
+        metric: Invocations
+        threshold: 100
         statistic: Average
         period: 86400 # 1 day
+        evaluationPeriods: 1
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: breaching
 
 custom:
@@ -53,15 +70,11 @@ custom:
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com
-    topics:
       alarm:
         topic: ${self:service}-alerts-alarm
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com
-    alarms:
-      - functionErrors
-      - functionInvocations
 
 plugins:
   - serverless-plugin-aws-alerts
