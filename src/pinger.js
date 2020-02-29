@@ -1,5 +1,6 @@
 const fs = require('fs');
 const serverlessMysql = require('serverless-mysql');
+const moment = require('moment');
 const mailgun = require('mailgun-js')({
   apiKey: process.env.MAILGUN_API_KEY,
   domain: process.env.MAILGUN_DOMAIN,
@@ -34,24 +35,104 @@ const connectionProperties = serverlessMysql({
   },
 });
 
+const MAX_MONTHLY_EMAIL = 100;
+const EMAIL_SETTINGS = {
+  from: 'Brokalys <noreply@brokalys.com>',
+};
+
+function getUnsubscribeLink(pinger) {
+  return `https://unsubscribe.brokalys.com/?key=${encodeURIComponent(pinger.unsubscribe_key)}&id=${encodeURIComponent(pinger.id)}`;
+}
+
+async function isMonthlyLimitWarningSent(pinger) {
+  const [{ count }] = await connection.query({
+    sql: `
+      SELECT COUNT(*) as count
+      FROM pinger_log
+      WHERE pinger_id = ?
+        AND created_at >= ?
+        AND email_type = ?
+    `,
+    values: [
+      pinger.id,
+      moment.utc().startOf('month').toDate(),
+      'limit-notification',
+    ],
+  });
+
+  return count > 0;
+}
+
+async function sendMonthlyLimitWarning(pinger) {
+  const content = fs.readFileSync('src/limit-notification-email.html', 'utf8');
+  const template = Handlebars.compile(content);
+
+  pinger.unsubscribe_url = getUnsubscribeLink(pinger);
+
+  const data = {
+    ...EMAIL_SETTINGS,
+    to: pinger.email,
+    subject: 'Brokalys ikmēneša e-pastu limits ir sasniegts',
+    html: template(pinger),
+  };
+
+  await connection.query(
+    'INSERT INTO pinger_log (`to`, `from`, `subject`, `content`, `pinger_id`, `email_type`) VALUES ?',
+    [[[
+      data.to,
+      data.from,
+      data.subject,
+      data.html,
+      pinger.id,
+      'limit-notification',
+    ]]],
+  );
+
+  await mailgun.messages().send(data);
+}
+
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const mainQuery = event.Records[0].Sns.MessageAttributes.query.Value;
   const id = event.Records[0].Sns.MessageAttributes.id.Value;
 
-  const currentDate = (new Date()).toISOString();
-  const lastDate = currentDate.replace('T', ' ').replace('Z', '');
+  const [pinger] = await connection.query({
+    sql: 'SELECT * FROM pinger_emails WHERE id = ?',
+    values: [id],
+    typeCast(field, next) {
+      if (field.type === 'TINY' && field.length === 1) {
+        return (field.string() === '1');
+      }
 
-  const [pinger] = await connection.query('SELECT * FROM pinger_emails WHERE id = ?', [id]);
+      return next();
+    },
+  });
+  const [{ count: emailsSent }] = await connection.query({
+    sql: 'SELECT COUNT(*) as count FROM pinger_log WHERE pinger_id = ? AND created_at >= ?',
+    values: [
+      id,
+      moment.utc().startOf('month').toDate(),
+    ],
+  });
 
-  let results = [];
+  await connection.query('UPDATE pinger_emails SET last_check_at = ? WHERE id = ?', [moment.utc().toDate(), id]);
 
-  if (pinger.last_check_at !== null) {
-    results = await connectionProperties.query(mainQuery, [pinger.last_check_at]);
+  if (pinger.last_check_at === null) {
+    callback(null, 'Initial run successful');
+    return;
   }
 
-  await connection.query('UPDATE pinger_emails SET last_check_at = ? WHERE id = ?', [lastDate, id]);
+  if (emailsSent >= MAX_MONTHLY_EMAIL && !pinger.is_premium) {
+    if ((await isMonthlyLimitWarningSent(pinger)) === false) {
+      await sendMonthlyLimitWarning(pinger);
+    }
+
+    callback(null, 'Monthly limit exceeded');
+    return;
+  }
+
+  const results = await connectionProperties.query(mainQuery, [pinger.last_check_at]);
 
   if (results.length) {
     const content = fs.readFileSync('src/email.html', 'utf8');
@@ -64,13 +145,13 @@ exports.run = async (event, context, callback) => {
         result.images = JSON.parse(result.images);
       }
 
-      result.unsubscribe_url = `https://unsubscribe.brokalys.com/?key=${encodeURIComponent(pinger.unsubscribe_key)}&id=${encodeURIComponent(pinger.id)}`;
+      result.unsubscribe_url = getUnsubscribeLink(pinger);
       result.url = `https://view.brokalys.com/?link=${encodeURIComponent(result.url)}`;
       result.price = numeral(result.price).format('0,0 €');
 
       const html = template(result);
       const data = {
-        from: 'Brokalys <noreply@brokalys.com>',
+        ...EMAIL_SETTINGS,
         to: pinger.email,
         subject: 'Jauns PINGER sludinājums',
         html,
