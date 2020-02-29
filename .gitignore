@@ -7,3 +7,4 @@ node_modules/
 previous-date.txt
 previous-date-leads.txt
 serverless.env.yml
+.eslintcache
