@@ -40,8 +40,8 @@ exports.run = async (event, context, callback) => {
 
   const results = await connection.query('SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1');
 
-  await Promise.all(results.map(async (result) => {
-    await sns.publish({
+  await Promise.all(results.map((result) =>
+    sns.publish({
       Message: 'ping',
       MessageAttributes: {
         query: {
@@ -50,15 +50,13 @@ exports.run = async (event, context, callback) => {
         },
         id: {
           DataType: 'String',
-          StringValue: String(result.id),
+          StringValue: '' + result.id,
         },
       },
       MessageStructure: 'string',
       TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger'
-    });
-
-    return Promise.resolve();
-  }));
+    }).promise()
+  ));
 
   callback(null, `Invoked ${results.length} item-crawlers.`);
 };
