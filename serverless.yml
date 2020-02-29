@@ -48,6 +48,12 @@ functions:
 custom:
   alerts:
     topics:
+      ok:
+        topic: ${self:service}-alerts-ok
+        notifications:
+          - protocol: email
+            endpoint: matiss@brokalys.com
+    topics:
       alarm:
         topic: ${self:service}-alerts-alarm
         notifications:
