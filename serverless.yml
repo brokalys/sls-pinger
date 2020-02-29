@@ -4,7 +4,6 @@ provider:
   name: aws
   region: eu-west-1
   runtime: nodejs12.x
-  timeout: 3
   cfLogs: true
   versionFunctions: false
   tracing: true
@@ -30,6 +29,9 @@ provider:
 
 functions:
   init:
+    name: BrokalysPinger-Init-${self:provider.stage}
+    description: Initialize the active brokalys pingers.
+    timeout: 1
     handler: src/init.run
     events:
       - schedule: rate(5 minutes)
@@ -37,6 +39,9 @@ functions:
       - functionErrors
       - functionInvocations
   pinger:
+    name: BrokalysPinger-Ping-${self:provider.stage}
+    description: Run individual pingers - collect data, send emails, log metrics.
+    timeout: 3
     handler: src/pinger.run
     events:
       - sns: pinger
