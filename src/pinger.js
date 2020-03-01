@@ -143,14 +143,14 @@ exports.run = async (event, context, callback) => {
     return;
   }
 
-  if (emailsSent >= MAX_MONTHLY_EMAIL && !pinger.is_premium) {
-    if ((await isMonthlyLimitWarningSent(pinger)) === false) {
-      await sendMonthlyLimitWarning(pinger);
-    }
+  // if (emailsSent >= MAX_MONTHLY_EMAIL && !pinger.is_premium) {
+  //   if ((await isMonthlyLimitWarningSent(pinger)) === false) {
+  //     await sendMonthlyLimitWarning(pinger);
+  //   }
 
-    callback(null, 'Monthly limit exceeded');
-    return;
-  }
+  //   callback(null, 'Monthly limit exceeded');
+  //   return;
+  // }
 
   const results = await connectionProperties.query(mainQuery, [
     pinger.last_check_at,
