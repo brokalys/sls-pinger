@@ -42,7 +42,7 @@ functions:
   pinger:
     name: BrokalysPinger-Ping-${self:provider.stage}
     description: Run individual pingers - collect data, send emails, log metrics.
-    timeout: 5
+    timeout: 6
     handler: src/pinger.run
     events:
       - sns: pinger
