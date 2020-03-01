@@ -108,40 +108,21 @@ exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const mainQuery = event.Records[0].Sns.MessageAttributes.query.Value;
-  const id = event.Records[0].Sns.MessageAttributes.id.Value;
-
-  const [pinger] = await connection.query({
-    sql: 'SELECT * FROM pinger_emails WHERE id = ?',
-    values: [id],
-    typeCast(field, next) {
-      if (field.type === 'TINY' && field.length === 1) {
-        return field.string() === '1';
-      }
-
-      return next();
-    },
-  });
-  const [{ count: emailsSent }] = await connection.query({
-    sql:
-      'SELECT COUNT(*) as count FROM pinger_log WHERE pinger_id = ? AND created_at >= ?',
-    values: [
-      id,
-      moment
-        .utc()
-        .startOf('month')
-        .toDate(),
-    ],
-  });
-
-  await connection.query(
-    'UPDATE pinger_emails SET last_check_at = ? WHERE id = ?',
-    [moment.utc().toDate(), id],
+  const pinger = JSON.parse(
+    event.Records[0].Sns.MessageAttributes.pinger.Value,
   );
 
-  if (pinger.last_check_at === null) {
-    callback(null, 'Initial run successful');
-    return;
-  }
+  // const [{ count: emailsSent }] = await connection.query({
+  //   sql:
+  //     'SELECT COUNT(*) as count FROM pinger_log WHERE pinger_id = ? AND created_at >= ?',
+  //   values: [
+  //     id,
+  //     moment
+  //       .utc()
+  //       .startOf('month')
+  //       .toDate(),
+  //   ],
+  // });
 
   // if (emailsSent >= MAX_MONTHLY_EMAIL && !pinger.is_premium) {
   //   if ((await isMonthlyLimitWarningSent(pinger)) === false) {
@@ -156,58 +137,61 @@ exports.run = async (event, context, callback) => {
     pinger.last_check_at,
   ]);
 
-  if (results.length) {
-    const content = fs.readFileSync('src/email.html', 'utf8');
-    const template = Handlebars.compile(content);
-
-    results = await Promise.all(
-      results.map(async result => {
-        result.content = nl2br(
-          (result.content || '').toString('utf8').replace(/(<([^>]+)>)/gi, ''),
-        );
-
-        if (result.images) {
-          result.images = JSON.parse(result.images);
-        }
-
-        result.unsubscribe_url = getUnsubscribeLink(pinger);
-        result.url = `https://view.brokalys.com/?link=${encodeURIComponent(
-          result.url,
-        )}`;
-        result.price = numeral(result.price).format('0,0 €');
-
-        const html = template(result);
-        const data = {
-          ...EMAIL_SETTINGS,
-          to: pinger.email,
-          subject: 'Jauns PINGER sludinājums',
-          html,
-        };
-
-        await mailgun.messages().send(data);
-
-        return Promise.resolve({
-          email: data,
-          property: result,
-        });
-      }),
-    );
-
-    await connection.query(
-      'INSERT INTO pinger_log (`to`, `bcc`, `from`, `subject`, `content`, `property_id`, `pinger_id`) VALUES ?',
-      [
-        results.map(row => [
-          row.email.to,
-          row.email.bcc,
-          row.email.from,
-          row.email.subject,
-          row.email.html,
-          row.property.id,
-          id,
-        ]),
-      ],
-    );
+  if (!results.length) {
+    callback(null, 'No emails to send');
+    return;
   }
+
+  const content = fs.readFileSync('src/email.html', 'utf8');
+  const template = Handlebars.compile(content);
+
+  const emails = await Promise.all(
+    results.map(async result => {
+      result.content = nl2br(
+        (result.content || '').toString('utf8').replace(/(<([^>]+)>)/gi, ''),
+      );
+
+      if (result.images) {
+        result.images = JSON.parse(result.images);
+      }
+
+      result.unsubscribe_url = getUnsubscribeLink(pinger);
+      result.url = `https://view.brokalys.com/?link=${encodeURIComponent(
+        result.url,
+      )}`;
+      result.price = numeral(result.price).format('0,0 €');
+
+      const html = template(result);
+      const data = {
+        ...EMAIL_SETTINGS,
+        to: pinger.email,
+        subject: 'Jauns PINGER sludinājums',
+        html,
+      };
+
+      await mailgun.messages().send(data);
+
+      return Promise.resolve({
+        email: data,
+        property: result,
+      });
+    }),
+  );
+
+  await connection.query(
+    'INSERT INTO pinger_log (`to`, `bcc`, `from`, `subject`, `content`, `property_id`, `pinger_id`) VALUES ?',
+    [
+      emails.map(row => [
+        row.email.to,
+        row.email.bcc,
+        row.email.from,
+        row.email.subject,
+        row.email.html,
+        row.property.id,
+        pinger.id,
+      ]),
+    ],
+  );
 
   callback(null, 'Success');
 };

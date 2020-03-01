@@ -1,4 +1,5 @@
 const serverlessMysql = require('serverless-mysql');
+const moment = require('moment');
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
 
@@ -62,30 +63,45 @@ exports.run = async (event, context, callback) => {
     `;
   };
 
-  const results = await connection.query(
-    'SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1',
+  const results = await connection.query({
+    sql:
+      'SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1',
+    typeCast(field, next) {
+      if (field.type === 'TINY' && field.length === 1) {
+        return field.string() === '1';
+      }
+
+      return next();
+    },
+  });
+
+  await connection.query(
+    'UPDATE pinger_emails SET last_check_at = ? WHERE unsubscribed_at IS NULL AND confirmed = 1',
+    [moment.utc().toDate(), id],
   );
 
   await Promise.all(
-    results.map(result =>
-      sns
-        .publish({
-          Message: 'ping',
-          MessageAttributes: {
-            query: {
-              DataType: 'String',
-              StringValue: buildQuery(result),
+    results
+      .filter(result => result.last_check_at !== null)
+      .map(result =>
+        sns
+          .publish({
+            Message: 'ping',
+            MessageAttributes: {
+              query: {
+                DataType: 'String',
+                StringValue: buildQuery(result),
+              },
+              pinger: {
+                DataType: 'String',
+                StringValue: JSON.stringify(result),
+              },
             },
-            id: {
-              DataType: 'String',
-              StringValue: '' + result.id,
-            },
-          },
-          MessageStructure: 'string',
-          TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
-        })
-        .promise(),
-    ),
+            MessageStructure: 'string',
+            TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
+          })
+          .promise(),
+      ),
   );
 
   callback(null, `Invoked ${results.length} item-crawlers.`);
