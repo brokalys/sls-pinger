@@ -95,17 +95,27 @@ functions:
         datapointsToAlarm: 1
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: breaching
+  limit-locker:
+    name: BrokalysPinger-LimitLocker-${self:provider.stage}
+    description: Lock pingers that have reached the monthly lockout threshold.
+    timeout: 1
+    handler: src/limit-locker.run
+    events:
+      - schedule: rate(10 minutes)
+    alarms:
+      - functionErrors
+      - functionInvocations
 
 custom:
   alerts:
     topics:
       ok:
-        topic: ${self:service}-alerts-ok
+        topic: ${self:service}-${self:provider.stage}-ok
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com
       alarm:
-        topic: ${self:service}-alerts-alarm
+        topic: ${self:service}-${self:provider.stage}-alarm
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com

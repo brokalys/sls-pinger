@@ -14,17 +14,6 @@ function nl2br(str, is_xhtml) {
   );
 }
 
-// const connection = serverlessMysql({
-//   config: {
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USERNAME,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_DATABASE,
-//     timezone: 'Z',
-//     typeCast: true,
-//   },
-// });
-
 const connectionProperties = serverlessMysql({
   config: {
     host: process.env.DB_HOST,
@@ -36,70 +25,11 @@ const connectionProperties = serverlessMysql({
   },
 });
 
-// const MAX_MONTHLY_EMAIL = 100;
-// const EMAIL_SETTINGS = {
-//   from: 'Brokalys <noreply@brokalys.com>',
-// };
-
 function getUnsubscribeLink(pinger) {
   return `https://unsubscribe.brokalys.com/?key=${encodeURIComponent(
     pinger.unsubscribe_key,
   )}&id=${encodeURIComponent(pinger.id)}`;
 }
-
-// async function isMonthlyLimitWarningSent(pinger) {
-//   const [{ count }] = await connection.query({
-//     sql: `
-//       SELECT COUNT(*) as count
-//       FROM pinger_log
-//       WHERE pinger_id = ?
-//         AND created_at >= ?
-//         AND email_type = ?
-//     `,
-//     values: [
-//       pinger.id,
-//       moment
-//         .utc()
-//         .startOf('month')
-//         .toDate(),
-//       'limit-notification',
-//     ],
-//   });
-
-//   return count > 0;
-// }
-
-// async function sendMonthlyLimitWarning(pinger) {
-//   const content = fs.readFileSync('src/limit-notification-email.html', 'utf8');
-//   const template = Handlebars.compile(content);
-
-//   pinger.unsubscribe_url = getUnsubscribeLink(pinger);
-
-//   const data = {
-//     ...EMAIL_SETTINGS,
-//     to: pinger.email,
-//     subject: 'Brokalys ikmēneša e-pastu limits ir sasniegts',
-//     html: template(pinger),
-//   };
-
-//   await connection.query(
-//     'INSERT INTO pinger_log (`to`, `from`, `subject`, `content`, `pinger_id`, `email_type`) VALUES ?',
-//     [
-//       [
-//         [
-//           data.to,
-//           data.from,
-//           data.subject,
-//           data.html,
-//           pinger.id,
-//           'limit-notification',
-//         ],
-//       ],
-//     ],
-//   );
-
-//   await mailgun.messages().send(data);
-// }
 
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -107,27 +37,6 @@ exports.run = async (event, context, callback) => {
   const { MessageAttributes } = event.Records[0].Sns;
   const mainQuery = MessageAttributes.query.Value;
   const pinger = JSON.parse(MessageAttributes.pinger.Value);
-
-  // const [{ count: emailsSent }] = await connection.query({
-  //   sql:
-  //     'SELECT COUNT(*) as count FROM pinger_log WHERE pinger_id = ? AND created_at >= ?',
-  //   values: [
-  //     id,
-  //     moment
-  //       .utc()
-  //       .startOf('month')
-  //       .toDate(),
-  //   ],
-  // });
-
-  // if (emailsSent >= MAX_MONTHLY_EMAIL && !pinger.is_premium) {
-  //   if ((await isMonthlyLimitWarningSent(pinger)) === false) {
-  //     await sendMonthlyLimitWarning(pinger);
-  //   }
-
-  //   callback(null, 'Monthly limit exceeded');
-  //   return;
-  // }
 
   const results = await connectionProperties.query(mainQuery, [
     pinger.last_check_at,
@@ -167,9 +76,13 @@ exports.run = async (event, context, callback) => {
                 DataType: 'String',
                 StringValue: data.to,
               },
+              subject: {
+                DataType: 'String',
+                StringValue: 'Jauns PINGER sludinājums',
+              },
               pinger_id: {
                 DataType: 'Number',
-                StringValue: '' + data.pinger_id,
+                StringValue: String(data.pinger_id),
               },
               template_id: {
                 DataType: 'String',

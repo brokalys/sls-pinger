@@ -64,8 +64,19 @@ exports.run = async (event, context, callback) => {
   };
 
   const results = await connection.query({
-    sql:
-      'SELECT * FROM pinger_emails WHERE unsubscribed_at IS NULL AND confirmed = 1',
+    sql: `
+    SELECT *
+    FROM pinger_emails
+    WHERE unsubscribed_at IS NULL
+      AND confirmed = 1
+      AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
+   `,
+    values: [
+      moment
+        .utc()
+        .startOf('month')
+        .toDate(),
+    ],
     typeCast(field, next) {
       if (field.type === 'TINY' && field.length === 1) {
         return field.string() === '1';

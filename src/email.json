@@ -7,6 +7,10 @@
           "Type": "String",
           "Value": "matiss@brokalys.com"
         },
+        "subject": {
+          "Type": "String",
+          "Value": "Test"
+        },
         "pinger_id": {
           "Type": "Number",
           "Value": 15

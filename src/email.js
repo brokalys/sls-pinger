@@ -22,11 +22,12 @@ exports.run = async (event, context, callback) => {
 
   const { MessageAttributes } = event.Records[0].Sns;
   const to = MessageAttributes.to.Value;
-  const pingerId = MessageAttributes.pinger_id.Value;
+  const subject = MessageAttributes.subject.Value;
+  const pingerId = (MessageAttributes.pinger_id || {}).Value;
   const templateId = MessageAttributes.template_id.Value;
-  const templateVariables = JSON.parse(
-    MessageAttributes.template_variables.Value,
-  );
+  const templateVariables = MessageAttributes.template_variables
+    ? JSON.parse(MessageAttributes.template_variables.Value)
+    : {};
 
   const content = fs.readFileSync(`src/${templateId}.html`, 'utf8');
   const template = Handlebars.compile(content);
@@ -34,7 +35,7 @@ exports.run = async (event, context, callback) => {
 
   const data = {
     from: 'Brokalys <noreply@brokalys.com>',
-    subject: 'Jauns PINGER sludinājums',
+    subject,
     to,
     html,
   };
