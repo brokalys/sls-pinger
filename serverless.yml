@@ -42,7 +42,7 @@ functions:
   pinger:
     name: BrokalysPinger-Ping-${self:provider.stage}
     description: Run individual pingers - collect data, send emails, log metrics.
-    timeout: 3
+    timeout: 5
     handler: src/pinger.run
     events:
       - sns: pinger
@@ -52,7 +52,7 @@ functions:
         metric: Errors
         threshold: 1
         statistic: Sum
-        period: 60
+        period: 300 # 5 minutes
         evaluationPeriods: 1
         datapointsToAlarm: 1
         comparisonOperator: GreaterThanOrEqualToThreshold
@@ -81,6 +81,9 @@ custom:
         notifications:
           - protocol: email
             endpoint: matiss@brokalys.com
+    definitions:
+      functionErrors:
+        period: 300 # 5 minutes
 
 plugins:
   - serverless-plugin-aws-alerts
