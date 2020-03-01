@@ -1,0 +1,25 @@
+{
+  "Records": [{
+    "Sns": {
+      "Message": "email",
+      "MessageAttributes": {
+        "to": {
+          "Type": "String",
+          "Value": "matiss@brokalys.com"
+        },
+        "pinger_id": {
+          "Type": "Number",
+          "Value": 15
+        },
+        "template_id": {
+          "Type": "String",
+          "Value": "email"
+        },
+        "template_variables": {
+          "Type": "String",
+          "Value": "{\"content\":\"Test\"}"
+        }
+      }
+    }
+  }]
+}

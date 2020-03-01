@@ -67,6 +67,34 @@ functions:
         datapointsToAlarm: 1
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: breaching
+  email:
+    name: BrokalysPinger-Email-${self:provider.stage}
+    description: Send email and log it.
+    timeout: 3
+    handler: src/email.run
+    events:
+      - sns: email
+    alarms:
+      - name: emailErrors
+        namespace: 'AWS/Lambda'
+        metric: Errors
+        threshold: 1
+        statistic: Sum
+        period: 300 # 5 minutes
+        evaluationPeriods: 2
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: notBreaching
+      - name: emailInvocations
+        namespace: 'AWS/Lambda'
+        metric: Invocations
+        threshold: 100
+        statistic: Average
+        period: 86400 # 1 day
+        evaluationPeriods: 1
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: breaching
 
 custom:
   alerts:
