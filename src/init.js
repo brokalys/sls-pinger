@@ -76,8 +76,8 @@ exports.run = async (event, context, callback) => {
   });
 
   await connection.query(
-    'UPDATE pinger_emails SET last_check_at = ? WHERE unsubscribed_at IS NULL AND confirmed = 1',
-    [moment.utc().toDate(), id],
+    'UPDATE pinger_emails SET last_check_at = ? WHERE id IN (?)',
+    [moment.utc().toDate(), results.map(({ id }) => id)],
   );
 
   await Promise.all(
