@@ -50,10 +50,10 @@ functions:
       - name: pingerErrors
         namespace: 'AWS/Lambda'
         metric: Errors
-        threshold: 3
+        threshold: 1
         statistic: Sum
         period: 300 # 5 minutes
-        evaluationPeriods: 1
+        evaluationPeriods: 2
         datapointsToAlarm: 1
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
