@@ -32,7 +32,7 @@ functions:
   init:
     name: BrokalysPinger-Init-${self:provider.stage}
     description: Initialize the active brokalys pingers.
-    timeout: 1
+    timeout: 2
     handler: src/init.run
     events:
       - schedule: rate(5 minutes)
@@ -70,7 +70,7 @@ functions:
   email:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
-    timeout: 3
+    timeout: 4
     handler: src/email.run
     events:
       - sns: email
@@ -122,6 +122,8 @@ custom:
     definitions:
       functionErrors:
         period: 300 # 5 minutes
+      functionInvocations:
+        period: 600 # 10 minutes
 
 plugins:
   - serverless-plugin-aws-alerts

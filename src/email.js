@@ -21,6 +21,8 @@ exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const { MessageAttributes } = event.Records[0].Sns;
+  console.log('Input', JSON.stringify(MessageAttributes));
+
   const to = MessageAttributes.to.Value;
   const subject = MessageAttributes.subject.Value;
   const pingerId = (MessageAttributes.pinger_id || {}).Value;
