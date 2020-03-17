@@ -6,7 +6,6 @@ provider:
   runtime: nodejs12.x
   cfLogs: true
   versionFunctions: false
-  tracing: true
   stage: ${opt:stage, 'dev'}
   environment:
       DB_HOST: ${file(serverless.env.yml):DB_HOST, env:DB_HOST}
@@ -21,12 +20,6 @@ provider:
       Action:
         - SNS:Publish
       Resource: "arn:aws:sns:eu-west-1:*:*"
-    - Effect: "Allow" # xray permissions (required)
-      Action:
-        - "xray:PutTraceSegments"
-        - "xray:PutTelemetryRecords"
-      Resource:
-        - "*"
 
 functions:
   init:
