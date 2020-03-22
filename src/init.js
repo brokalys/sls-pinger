@@ -19,7 +19,7 @@ const connection = serverlessMysql({
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const buildQuery = ping => {
+  const buildQuery = (ping) => {
     return `
       SELECT *
       FROM properties
@@ -71,12 +71,7 @@ exports.run = async (event, context, callback) => {
       AND confirmed = 1
       AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
    `,
-    values: [
-      moment
-        .utc()
-        .startOf('month')
-        .toDate(),
-    ],
+    values: [moment.utc().startOf('month').toDate()],
     typeCast(field, next) {
       if (field.type === 'TINY' && field.length === 1) {
         return field.string() === '1';
@@ -93,8 +88,8 @@ exports.run = async (event, context, callback) => {
 
   await Promise.all(
     results
-      .filter(result => result.last_check_at !== null)
-      .map(result =>
+      .filter((result) => result.last_check_at !== null)
+      .map((result) =>
         sns
           .publish({
             Message: 'ping',

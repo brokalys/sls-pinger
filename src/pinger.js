@@ -44,7 +44,7 @@ exports.run = async (event, context, callback) => {
 
   await Promise.all(
     results
-      .map(result => {
+      .map((result) => {
         result.content = nl2br(
           (result.content || '').toString('utf8').replace(/(<([^>]+)>)/gi, ''),
         );
@@ -67,7 +67,7 @@ exports.run = async (event, context, callback) => {
           template_variables: result,
         };
       })
-      .map(data =>
+      .map((data) =>
         sns
           .publish({
             Message: 'email',

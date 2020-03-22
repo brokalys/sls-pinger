@@ -29,10 +29,7 @@ async function isMonthlyLimitWarningSent(email) {
     `,
     values: [
       email,
-      moment
-        .utc()
-        .startOf('month')
-        .toDate(),
+      moment.utc().startOf('month').toDate(),
       'limit-notification',
     ],
   });
@@ -56,18 +53,12 @@ exports.run = async (event, context, callback) => {
     HAVING COUNT(*) >= ?
   `,
       [
-        moment
-          .utc()
-          .startOf('month')
-          .toDate(),
-        moment
-          .utc()
-          .startOf('month')
-          .toDate(),
+        moment.utc().startOf('month').toDate(),
+        moment.utc().startOf('month').toDate(),
         MAX_MONTHLY_EMAILS,
       ],
     )
-  ).map(row => row.email);
+  ).map((row) => row.email);
 
   if (!emails.length) {
     callback(null, 'Nothing to do');
@@ -84,7 +75,7 @@ exports.run = async (event, context, callback) => {
   );
 
   await Promise.all(
-    emails.map(email => {
+    emails.map((email) => {
       sns
         .publish({
           Message: 'email',
