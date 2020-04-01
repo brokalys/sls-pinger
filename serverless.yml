@@ -63,7 +63,7 @@ functions:
   email:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
-    timeout: 3
+    timeout: 5
     handler: src/email.run
     events:
       - sns: email
@@ -74,8 +74,8 @@ functions:
         threshold: 1
         statistic: Sum
         period: 300 # 5 minutes
-        evaluationPeriods: 2
-        datapointsToAlarm: 1
+        evaluationPeriods: 1
+        datapointsToAlarm: 2
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
       - name: emailInvocations
