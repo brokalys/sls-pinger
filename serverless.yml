@@ -62,7 +62,6 @@ functions:
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: breaching
       - name: functionDuration
-        threshold: 2000
   email:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
