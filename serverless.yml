@@ -5,6 +5,7 @@ provider:
   region: eu-west-1
   runtime: nodejs12.x
   cfLogs: true
+  logRetentionInDays: 7
   versionFunctions: false
   stage: ${opt:stage, 'dev'}
   environment:
