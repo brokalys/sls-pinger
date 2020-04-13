@@ -81,33 +81,41 @@ exports.run = async (event, context, callback) => {
     },
   });
 
+  const availablePingers = results.filter(
+    (result) => result.last_check_at !== null,
+  );
+
+  // Simple DDOS protection - require an engineer to
+  // intervene if there are too many new sign-ups
+  if (availablePingers.length > 100) {
+    throw new Error('Pinger MAX limit exceeded');
+  }
+
   await connection.query(
     'UPDATE pinger_emails SET last_check_at = ? WHERE id IN (?)',
     [moment.utc().toDate(), results.map(({ id }) => id)],
   );
 
   await Promise.all(
-    results
-      .filter((result) => result.last_check_at !== null)
-      .map((result) =>
-        sns
-          .publish({
-            Message: 'ping',
-            MessageAttributes: {
-              query: {
-                DataType: 'String',
-                StringValue: buildQuery(result),
-              },
-              pinger: {
-                DataType: 'String',
-                StringValue: JSON.stringify(result),
-              },
+    availablePingers.map((result) =>
+      sns
+        .publish({
+          Message: 'ping',
+          MessageAttributes: {
+            query: {
+              DataType: 'String',
+              StringValue: buildQuery(result),
             },
-            MessageStructure: 'string',
-            TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
-          })
-          .promise(),
-      ),
+            pinger: {
+              DataType: 'String',
+              StringValue: JSON.stringify(result),
+            },
+          },
+          MessageStructure: 'string',
+          TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
+        })
+        .promise(),
+    ),
   );
 
   callback(null, `Invoked ${results.length} item-crawlers.`);
