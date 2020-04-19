@@ -120,6 +120,9 @@ custom:
         evaluationPeriods: 2
       functionInvocations:
         period: 600 # 10 minutes
+      functionDuration:
+        evaluationPeriods: 3
+        datapointsToAlarm: 3
 
 plugins:
   - serverless-plugin-aws-alerts
