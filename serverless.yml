@@ -33,7 +33,6 @@ functions:
     alarms:
       - functionErrors
       - functionInvocations
-      - functionDuration
   pinger:
     name: BrokalysPinger-Ping-${self:provider.stage}
     description: Run individual pingers - collect data, send emails, log metrics.
