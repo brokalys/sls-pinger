@@ -26,13 +26,14 @@ functions:
   init:
     name: BrokalysPinger-Init-${self:provider.stage}
     description: Initialize the active brokalys pingers.
-    timeout: 2
+    timeout: 4
     handler: src/init.run
     events:
       - schedule: rate(5 minutes)
     alarms:
       - functionErrors
       - functionInvocations
+      - functionDuration
   pinger:
     name: BrokalysPinger-Ping-${self:provider.stage}
     description: Run individual pingers - collect data, send emails, log metrics.
@@ -118,6 +119,7 @@ custom:
       functionErrors:
         period: 300 # 5 minutes
         evaluationPeriods: 2
+        datapointsToAlarm: 2
       functionInvocations:
         period: 600 # 10 minutes
       functionDuration:
