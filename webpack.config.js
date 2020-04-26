@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
+const CopyPlugin = require('copy-webpack-plugin');
+
 require('dotenv').config();
 
 const env = Object.entries(process.env).reduce(
@@ -16,5 +18,5 @@ module.exports = {
   entry: slsw.lib.entries,
   externals: [nodeExternals()],
   target: 'node',
-  plugins: [new webpack.DefinePlugin(env)],
+  plugins: [new webpack.DefinePlugin(env), new CopyPlugin(['src/**.html'])],
 };
