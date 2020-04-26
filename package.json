@@ -15,7 +15,6 @@
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/mja-lv/pinger#readme",
   "dependencies": {
-    "aws-sdk": "^2.151.0",
     "handlebars": "^4.0.10",
     "mailgun-js": "^0.22.0",
     "moment": "^2.24.0",
@@ -23,6 +22,8 @@
     "serverless-mysql": "^1.5.3"
   },
   "devDependencies": {
+    "aws-sdk": "^2.151.0",
+    "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",
@@ -31,7 +32,9 @@
     "prettier": "^2.0.1",
     "serverless": "^1.65.0",
     "serverless-plugin-aws-alerts": "^1.4.0",
-    "serverless-plugin-tracing": "^2.0.0"
+    "serverless-webpack": "^5.3.1",
+    "webpack": "^4.43.0",
+    "webpack-node-externals": "^1.7.2"
   },
   "husky": {
     "hooks": {

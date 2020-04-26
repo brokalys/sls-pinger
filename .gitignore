@@ -6,5 +6,4 @@ node_modules/
 .env
 previous-date.txt
 previous-date-leads.txt
-serverless.env.yml
 .eslintcache

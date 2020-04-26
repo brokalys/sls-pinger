@@ -8,14 +8,6 @@ provider:
   logRetentionInDays: 7
   versionFunctions: false
   stage: ${opt:stage, 'dev'}
-  environment:
-      DB_HOST: ${file(serverless.env.yml):DB_HOST, env:DB_HOST}
-      DB_DATABASE: ${file(serverless.env.yml):DB_DATABASE, env:DB_DATABASE}
-      DB_USERNAME: ${file(serverless.env.yml):DB_USERNAME, env:DB_USERNAME}
-      DB_PASSWORD: ${file(serverless.env.yml):DB_PASSWORD, env:DB_PASSWORD}
-      DB_PROPERTIES_DATABASE: ${file(serverless.env.yml):DB_PROPERTIES_DATABASE, env:DB_PROPERTIES_DATABASE}
-      MAILGUN_API_KEY: ${file(serverless.env.yml):MAILGUN_API_KEY, env:MAILGUN_API_KEY}
-      MAILGUN_DOMAIN: ${file(serverless.env.yml):MAILGUN_DOMAIN, env:MAILGUN_DOMAIN}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -125,6 +117,13 @@ custom:
         evaluationPeriods: 3
         datapointsToAlarm: 3
 
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules:
+      forceExclude:
+        - aws-sdk
+    packager: 'yarn'
+
 plugins:
   - serverless-plugin-aws-alerts
-  - serverless-plugin-tracing
+  - serverless-webpack
