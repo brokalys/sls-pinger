@@ -8,7 +8,7 @@ pipelines:
           script:
             - yarn
             - yarn lint
-            - pipe: atlassian/serverless-deploy:0.1.3
+            - pipe: atlassian/serverless-deploy:0.1.4
               variables:
                 DB_HOST: $DB_HOST
                 DB_DATABASE: $DB_DATABASE
