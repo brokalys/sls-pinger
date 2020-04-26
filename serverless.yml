@@ -22,9 +22,6 @@ functions:
     handler: src/init.run
     events:
       - schedule: rate(5 minutes)
-    alarms:
-      - functionErrors
-      - functionInvocations
   pinger:
     name: BrokalysPinger-Ping-${self:provider.stage}
     description: Run individual pingers - collect data, send emails, log metrics.
@@ -43,17 +40,6 @@ functions:
         datapointsToAlarm: 2
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
-      - name: pingerInvocations
-        namespace: 'AWS/Lambda'
-        metric: Invocations
-        threshold: 100
-        statistic: Average
-        period: 86400 # 1 day
-        evaluationPeriods: 1
-        datapointsToAlarm: 1
-        comparisonOperator: GreaterThanOrEqualToThreshold
-        treatMissingData: breaching
-      - name: functionDuration
   email:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
@@ -89,12 +75,12 @@ functions:
     handler: src/limit-locker.run
     events:
       - schedule: rate(10 minutes)
-    alarms:
-      - functionErrors
-      - functionInvocations
 
 custom:
   alerts:
+    stages:
+      - production
+    nameTemplate: $[functionName]-$[metricName]
     topics:
       ok:
         topic: ${self:service}-${self:provider.stage}-ok
