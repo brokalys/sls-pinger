@@ -81,9 +81,9 @@ exports.run = async (event, context, callback) => {
     },
   });
 
-  const availablePingers = results.filter(
-    (result) => result.last_check_at !== null,
-  );
+  const availablePingers = results
+    .filter((result) => result.last_check_at !== null)
+    .filter((result) => moment().diff(result.last_check_at, 'days') < 2);
 
   // Simple DDOS protection - require an engineer to
   // intervene if there are too many new sign-ups
@@ -97,29 +97,25 @@ exports.run = async (event, context, callback) => {
   );
 
   await Promise.all(
-    availablePingers
-      .filter(
-        (result) => moment(results.last_check_at).diff(moment(), 'days') < 3,
-      )
-      .map((result) =>
-        sns
-          .publish({
-            Message: 'ping',
-            MessageAttributes: {
-              query: {
-                DataType: 'String',
-                StringValue: buildQuery(result),
-              },
-              pinger: {
-                DataType: 'String',
-                StringValue: JSON.stringify(result),
-              },
+    availablePingers.map((result) =>
+      sns
+        .publish({
+          Message: 'ping',
+          MessageAttributes: {
+            query: {
+              DataType: 'String',
+              StringValue: buildQuery(result),
             },
-            MessageStructure: 'string',
-            TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
-          })
-          .promise(),
-      ),
+            pinger: {
+              DataType: 'String',
+              StringValue: JSON.stringify(result),
+            },
+          },
+          MessageStructure: 'string',
+          TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
+        })
+        .promise(),
+    ),
   );
 
   callback(null, `Invoked ${results.length} item-crawlers.`);
