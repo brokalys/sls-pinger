@@ -97,25 +97,29 @@ exports.run = async (event, context, callback) => {
   );
 
   await Promise.all(
-    availablePingers.map((result) =>
-      sns
-        .publish({
-          Message: 'ping',
-          MessageAttributes: {
-            query: {
-              DataType: 'String',
-              StringValue: buildQuery(result),
+    availablePingers
+      .filter(
+        (result) => moment(results.last_check_at).diff(moment(), 'days') < 3,
+      )
+      .map((result) =>
+        sns
+          .publish({
+            Message: 'ping',
+            MessageAttributes: {
+              query: {
+                DataType: 'String',
+                StringValue: buildQuery(result),
+              },
+              pinger: {
+                DataType: 'String',
+                StringValue: JSON.stringify(result),
+              },
             },
-            pinger: {
-              DataType: 'String',
-              StringValue: JSON.stringify(result),
-            },
-          },
-          MessageStructure: 'string',
-          TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
-        })
-        .promise(),
-    ),
+            MessageStructure: 'string',
+            TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
+          })
+          .promise(),
+      ),
   );
 
   callback(null, `Invoked ${results.length} item-crawlers.`);

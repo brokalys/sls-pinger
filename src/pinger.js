@@ -1,4 +1,5 @@
 const serverlessMysql = require('serverless-mysql');
+const moment = require('moment');
 const numeral = require('numeral');
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
@@ -37,10 +38,17 @@ exports.run = async (event, context, callback) => {
   const { MessageAttributes } = event.Records[0].Sns;
   const mainQuery = MessageAttributes.query.Value;
   const pinger = JSON.parse(MessageAttributes.pinger.Value);
+  console.log('Pinger ID', pinger.id);
 
   const results = await connectionProperties.query(mainQuery, [
     pinger.last_check_at,
   ]);
+
+  if (results.length >= 30) {
+    throw new Error(
+      'There might be an issue with the pinger. Too many emails would be sent.',
+    );
+  }
 
   await Promise.all(
     results
