@@ -42,9 +42,7 @@ exports.run = async (event, context, callback) => {
     html,
   };
 
-  const email = await mailgun.messages().send(data);
-
-  await connection.query({
+  const { insertId } = await connection.query({
     sql: 'INSERT INTO pinger_log SET ?',
     values: {
       to: data.to,
@@ -55,6 +53,13 @@ exports.run = async (event, context, callback) => {
       email_type: templateId,
       property_id: templateVariables.propertyId || null,
     },
+  });
+
+  const email = await mailgun.messages().send(data);
+
+  await connection.query({
+    sql: `UPDATE pinger_log SET sent_at = NOW(), response = ? WHERE id = ?`,
+    values: [JSON.stringify(email), insertId],
   });
 
   callback(null, 'Success');
