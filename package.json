@@ -1,19 +1,15 @@
 {
-  "name": "pinger",
+  "name": "sls-pinger",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "repository": "git@github.com:brokalys/sls-pinger.git",
+  "author": "Matiss Janis Aboltins <matiss@mja.lv>",
+  "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "deploy": "serverless deploy",
+    "deploy:ci": "yarn deploy --conceal --stage production"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/mja-lv/pinger.git"
-  },
-  "author": "Matiss Janis Aboltins <matiss@mja.lv>",
-  "license": "UNLICENSED",
-  "homepage": "https://bitbucket.org/mja-lv/pinger#readme",
   "dependencies": {
     "handlebars": "^4.0.10",
     "mailgun-js": "^0.22.0",
