@@ -112,7 +112,7 @@ exports.run = async (event, context, callback) => {
             },
           },
           MessageStructure: 'string',
-          TargetArn: 'arn:aws:sns:eu-west-1:173751334418:pinger',
+          TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:pinger`,
         })
         .promise(),
     ),
