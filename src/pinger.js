@@ -1,5 +1,4 @@
-const serverlessMysql = require('serverless-mysql');
-const moment = require('moment');
+const axios = require('axios');
 const numeral = require('numeral');
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
@@ -15,17 +14,6 @@ function nl2br(str, is_xhtml) {
   );
 }
 
-const connectionProperties = serverlessMysql({
-  config: {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_PROPERTIES_DATABASE,
-    timezone: 'Z',
-    typeCast: true,
-  },
-});
-
 function getUnsubscribeLink(pinger) {
   return `https://unsubscribe.brokalys.com/?key=${encodeURIComponent(
     pinger.unsubscribe_key,
@@ -40,9 +28,18 @@ exports.run = async (event, context, callback) => {
   const pinger = JSON.parse(MessageAttributes.pinger.Value);
   console.log('Pinger ID', pinger.id);
 
-  const results = await connectionProperties.query(mainQuery, [
-    pinger.last_check_at,
-  ]);
+  const { data } = await axios.post(
+    'https://api.brokalys.com',
+    {
+      query: mainQuery.replace('%date%', pinger.last_check_at),
+    },
+    {
+      headers: {
+        Authorization: process.env.BROKALYS_API_PRIVATE_KEY,
+      },
+    },
+  );
+  const results = data.data.getPropertiesForPinger;
 
   if (results.length >= 30) {
     throw new Error(
@@ -53,13 +50,7 @@ exports.run = async (event, context, callback) => {
   await Promise.all(
     results
       .map((result) => {
-        result.content = nl2br(
-          (result.content || '').toString('utf8').replace(/(<([^>]+)>)/gi, ''),
-        );
-
-        if (result.images) {
-          result.images = JSON.parse(result.images);
-        }
+        result.content = nl2br(result.content.replace(/(<([^>]+)>)/gi, ''));
 
         result.unsubscribe_url = getUnsubscribeLink(pinger);
         result.url = `https://view.brokalys.com/?link=${encodeURIComponent(

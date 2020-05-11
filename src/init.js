@@ -21,45 +21,39 @@ exports.run = async (event, context, callback) => {
 
   const buildQuery = (ping) => {
     return `
-      SELECT *
-      FROM properties
-      WHERE created_at > ?
-       ${
-         ping.categories
-           ? `AND category IN ("${JSON.parse(ping.categories).join('","')}")`
-           : ''
-       }
-       ${
-         ping.types
-           ? `AND type IN ("${JSON.parse(ping.types).join('","')}")`
-           : ''
-       }
-       ${
-         ping.types && JSON.parse(ping.types).indexOf('rent') >= 0
-           ? 'AND (rent_type IS NULL OR rent_type = "monthly")'
-           : ''
-       }
-       ${ping.price_min > 0 ? `AND price >= ${ping.price_min}` : ''}
-       ${ping.price_max > 0 ? `AND price <= ${ping.price_max}` : ''}
-       ${ping.rooms_min > 0 ? `AND rooms >= ${ping.rooms_min}` : ''}
-       ${ping.rooms_max > 0 ? `AND rooms <= ${ping.rooms_max}` : ''}
-       ${
-         ping.area_m2_min > 0
-           ? `AND (area >= ${ping.area_m2_min} AND area_measurement = "m2" OR area_measurement != "m2")`
-           : ''
-       }
-       ${
-         ping.area_m2_max > 0
-           ? `AND (area <= ${ping.area_m2_max} AND area_measurement = "m2" OR area_measurement != "m2")`
-           : ''
-       }
-       ${ping.additional ? `AND ${ping.additional}` : ''}
-       ${
-         ping.location
-           ? `AND ST_Contains(ST_GeomFromText('POLYGON((${ping.location}))'), point(lat, lng))`
-           : ''
-       }
-      ORDER BY created_at
+      {
+        getPropertiesForPinger(
+          start_date: "%date%"
+          category: ${JSON.parse(ping.categories)[0].toUpperCase()}
+          type: ${JSON.parse(ping.types)[0].toUpperCase()}
+          region: "${ping.location}"
+          price: {
+            ${ping.price_min > 0 ? `min: ${ping.price_min},` : ''}
+            ${ping.price_max > 0 ? `max: ${ping.price_max},` : ''}
+          }
+          rooms: {
+            ${ping.rooms_min > 0 ? `min: ${ping.rooms_min},` : ''}
+            ${ping.rooms_max > 0 ? `max: ${ping.rooms_max},` : ''}
+          }
+          area: {
+            ${ping.area_m2_min > 0 ? `min: ${ping.area_m2_min},` : ''}
+            ${ping.area_m2_max > 0 ? `max: ${ping.area_m2_max},` : ''}
+          }
+          floor: {
+            ${ping.floor_min > 0 ? `min: ${ping.floor_min},` : ''}
+            ${ping.floor_max > 0 ? `max: ${ping.floor_max},` : ''}
+          }
+        ) {
+          id
+          url
+          price
+          images
+          content
+          price
+          rooms
+          area
+        }
+      }
     `;
   };
 
