@@ -23,25 +23,27 @@ exports.run = async (event, context, callback) => {
     return `
       {
         properties(
-          created_at: { gte: "%date%" }
-          category: { eq: "${JSON.parse(ping.categories)[0]}" }
-          type: { eq: "${JSON.parse(ping.types)[0]}" }
-          region: { in: ["${ping.location}"] }
-          price: {
-            ${ping.price_min > 0 ? `gte: ${ping.price_min}` : ''}
-            ${ping.price_max > 0 ? `lte: ${ping.price_max}` : ''}
-          }
-          rooms: {
-            ${ping.rooms_min > 0 ? `gte: ${ping.rooms_min}` : ''}
-            ${ping.rooms_max > 0 ? `lte: ${ping.rooms_max}` : ''}
-          }
-          area: {
-            ${ping.area_m2_min > 0 ? `gte: ${ping.area_m2_min}` : ''}
-            ${ping.area_m2_max > 0 ? `lte: ${ping.area_m2_max}` : ''}
-          }
-          floor: {
-            ${ping.floor_min > 0 ? `gte: ${ping.floor_min}` : ''}
-            ${ping.floor_max > 0 ? `lte: ${ping.floor_max}` : ''}
+          filter: {
+            created_at: { gte: "%date%" }
+            category: { eq: "${JSON.parse(ping.categories)[0]}" }
+            type: { eq: "${JSON.parse(ping.types)[0]}" }
+            region: { in: ["${ping.location}"] }
+            price: {
+              ${ping.price_min > 0 ? `gte: ${ping.price_min}` : ''}
+              ${ping.price_max > 0 ? `lte: ${ping.price_max}` : ''}
+            }
+            rooms: {
+              ${ping.rooms_min > 0 ? `gte: ${ping.rooms_min}` : ''}
+              ${ping.rooms_max > 0 ? `lte: ${ping.rooms_max}` : ''}
+            }
+            area: {
+              ${ping.area_m2_min > 0 ? `gte: ${ping.area_m2_min}` : ''}
+              ${ping.area_m2_max > 0 ? `lte: ${ping.area_m2_max}` : ''}
+            }
+            floor: {
+              ${ping.floor_min > 0 ? `gte: ${ping.floor_min}` : ''}
+              ${ping.floor_max > 0 ? `lte: ${ping.floor_max}` : ''}
+            }
           }
         ) {
           results {
