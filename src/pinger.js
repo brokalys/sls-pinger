@@ -28,10 +28,13 @@ exports.run = async (event, context, callback) => {
   const pinger = JSON.parse(MessageAttributes.pinger.Value);
   console.log('Pinger ID', pinger.id);
 
+  const query = mainQuery.replace('%date%', pinger.last_check_at);
+  console.log('Query', query);
+
   const { data } = await axios.post(
     'https://api.brokalys.com',
     {
-      query: mainQuery.replace('%date%', pinger.last_check_at),
+      query,
     },
     {
       headers: {
