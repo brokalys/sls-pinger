@@ -39,7 +39,8 @@ exports.run = async (event, context, callback) => {
       },
     },
   );
-  const results = data.data.getPropertiesForPinger;
+
+  const { results } = data.data.properties;
 
   if (results.length >= 30) {
     throw new Error(

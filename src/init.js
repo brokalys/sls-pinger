@@ -22,36 +22,38 @@ exports.run = async (event, context, callback) => {
   const buildQuery = (ping) => {
     return `
       {
-        getPropertiesForPinger(
-          start_date: "%date%"
-          category: ${JSON.parse(ping.categories)[0].toUpperCase()}
-          type: ${JSON.parse(ping.types)[0].toUpperCase()}
-          region: "${ping.location}"
+        properties(
+          created_at: { gte: "%date%" }
+          category: { eq: "${JSON.parse(ping.categories)[0]}" }
+          type: { eq: "${JSON.parse(ping.types)[0]}" }
+          region: { in: ["${ping.location}"] }
           price: {
-            ${ping.price_min > 0 ? `min: ${ping.price_min},` : ''}
-            ${ping.price_max > 0 ? `max: ${ping.price_max},` : ''}
+            ${ping.price_min > 0 ? `gte: ${ping.price_min}` : ''}
+            ${ping.price_max > 0 ? `lte: ${ping.price_max}` : ''}
           }
           rooms: {
-            ${ping.rooms_min > 0 ? `min: ${ping.rooms_min},` : ''}
-            ${ping.rooms_max > 0 ? `max: ${ping.rooms_max},` : ''}
+            ${ping.rooms_min > 0 ? `gte: ${ping.rooms_min}` : ''}
+            ${ping.rooms_max > 0 ? `lte: ${ping.rooms_max}` : ''}
           }
           area: {
-            ${ping.area_m2_min > 0 ? `min: ${ping.area_m2_min},` : ''}
-            ${ping.area_m2_max > 0 ? `max: ${ping.area_m2_max},` : ''}
+            ${ping.area_m2_min > 0 ? `gte: ${ping.area_m2_min}` : ''}
+            ${ping.area_m2_max > 0 ? `lte: ${ping.area_m2_max}` : ''}
           }
           floor: {
-            ${ping.floor_min > 0 ? `min: ${ping.floor_min},` : ''}
-            ${ping.floor_max > 0 ? `max: ${ping.floor_max},` : ''}
+            ${ping.floor_min > 0 ? `gte: ${ping.floor_min}` : ''}
+            ${ping.floor_max > 0 ? `lte: ${ping.floor_max}` : ''}
           }
         ) {
-          id
-          url
-          price
-          images
-          content
-          price
-          rooms
-          area
+          results {
+            id
+            url
+            price
+            images
+            content
+            price
+            rooms
+            area
+          }
         }
       }
     `;
