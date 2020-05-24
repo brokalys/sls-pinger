@@ -39,6 +39,7 @@ exports.run = async (event, context, callback) => {
     {
       headers: {
         Authorization: process.env.BROKALYS_API_PRIVATE_KEY,
+        'Cache-Control': 'no-cache',
       },
     },
   );
