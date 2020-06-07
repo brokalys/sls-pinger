@@ -61,8 +61,8 @@ functions:
       - name: emailInvocations
         namespace: 'AWS/Lambda'
         metric: Invocations
-        threshold: 100
-        statistic: Average
+        threshold: 800
+        statistic: Sum
         period: 86400 # 1 day
         evaluationPeriods: 1
         datapointsToAlarm: 1
