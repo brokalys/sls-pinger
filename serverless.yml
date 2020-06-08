@@ -43,7 +43,7 @@ functions:
   email:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
-    timeout: 5
+    timeout: 10
     handler: src/email.run
     events:
       - sns: email
