@@ -43,10 +43,11 @@ exports.run = async (event, context, callback) => {
       },
     },
   );
+  console.log('Response', data);
 
   const { results } = data.data.properties;
 
-  if (results.length >= 30) {
+  if (!results || results.length >= 30) {
     throw new Error(
       'There might be an issue with the pinger. Too many emails would be sent.',
     );
