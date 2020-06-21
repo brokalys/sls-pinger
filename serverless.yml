@@ -75,6 +75,18 @@ functions:
     handler: src/limit-locker.run
     events:
       - schedule: rate(10 minutes)
+  process-sqs:
+    name: BrokalysPinger-ProcessSqs-${self:provider.stage}
+    description: Process SQS to trigger pinger email sending.
+    handler: src/process-sqs.run
+    reservedConcurrency: 5
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - PingerQueue
+              - Arn
+          batchSize: 10
 
 custom:
   alerts:
@@ -113,3 +125,10 @@ custom:
 plugins:
   - serverless-plugin-aws-alerts
   - serverless-webpack
+
+resources:
+  Resources:
+    PingerQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:provider.stage}-pinger
