@@ -53,38 +53,38 @@ export async function run(event, context) {
       .filter((pinger) => pinger.types.includes(property.type))
       .filter(
         (pinger) =>
-          pinger.price_min === null || pinger.price_min >= property.price,
+          pinger.price_min === null || property.price >= pinger.price_min,
       )
       .filter(
         (pinger) =>
-          pinger.price_max === null || pinger.price_max <= property.price,
+          pinger.price_max === null || property.price <= pinger.price_max,
       )
       .filter(
         (pinger) =>
-          pinger.rooms_min === null || pinger.rooms_min >= property.rooms,
+          pinger.rooms_min === null || property.rooms >= pinger.rooms_min,
       )
       .filter(
         (pinger) =>
-          pinger.rooms_max === null || pinger.rooms_max <= property.rooms,
+          pinger.rooms_max === null || property.rooms <= pinger.rooms_max,
       )
       .filter(
         (pinger) =>
-          pinger.area_m2_min === null || pinger.area_m2_min >= property.area,
+          pinger.area_m2_min === null || property.area >= pinger.area_m2_min,
       )
       .filter(
         (pinger) =>
-          pinger.area_m2_max === null || pinger.area_m2_max <= property.area,
+          pinger.area_m2_max === null || property.area <= pinger.area_m2_max,
       )
       .filter(
         (pinger) =>
-          pinger.floor_min === null || pinger.floor_min >= property.floor,
+          pinger.floor_min === null || property.floor >= pinger.floor_min,
       )
       .filter(
         (pinger) =>
-          pinger.floor_max === null || pinger.floor_max <= property.floor,
+          pinger.floor_max === null || property.floor <= pinger.floor_max,
       )
       .filter((pinger) =>
-        inside([property.lng, property.lat], pinger.location),
+        inside([property.lat, property.lng], pinger.location),
       );
 
     console.log(
