@@ -13,6 +13,13 @@ const connection = serverlessMysql({
   },
 });
 
+function parseLocation(location) {
+  return location
+    .split(', ')
+    .map((row) => row.split(' ').map((row) => parseFloat(row)))
+    .slice(0, -1);
+}
+
 export async function run(event, context) {
   const properties = event.Records.map((row) => JSON.parse(row.body)).filter(
     (property) =>
@@ -84,7 +91,7 @@ export async function run(event, context) {
           pinger.floor_max === null || property.floor <= pinger.floor_max,
       )
       .filter((pinger) =>
-        inside([property.lat, property.lng], pinger.location),
+        inside([property.lat, property.lng], parseLocation(pinger.location)),
       );
 
     console.log(
