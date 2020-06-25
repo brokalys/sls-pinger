@@ -24,10 +24,10 @@ exports.run = async (event, context, callback) => {
   console.log('Input', JSON.stringify(MessageAttributes));
 
   // Do not process SQS emails for now..
-  if (MessageAttributes.sqs && MessageAttributes.sqs.Value === 'yes') {
-    console.log('SQS email received', MessageAttributes);
-    return;
-  }
+  // if (MessageAttributes.sqs && MessageAttributes.sqs.Value === 'yes') {
+  //   console.log('SQS email received', MessageAttributes);
+  //   return;
+  // }
 
   const to = MessageAttributes.to.Value;
   const subject = MessageAttributes.subject.Value;

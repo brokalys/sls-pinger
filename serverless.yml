@@ -12,7 +12,7 @@ provider:
     - Effect: Allow
       Action:
         - SNS:Publish
-      Resource: "arn:aws:sns:eu-west-1:*:*"
+      Resource: 'arn:aws:sns:eu-west-1:*:*'
 
 functions:
   init:
@@ -20,8 +20,8 @@ functions:
     description: Initialize the active brokalys pingers.
     timeout: 4
     handler: src/init.run
-    events:
-      - schedule: rate(5 minutes)
+    # events:
+    #   - schedule: rate(5 minutes)
   pinger:
     name: BrokalysPinger-Ping-${self:provider.stage}
     description: Run individual pingers - collect data, send emails, log metrics.
