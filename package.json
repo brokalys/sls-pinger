@@ -11,7 +11,6 @@
     "deploy:ci": "yarn deploy --conceal --stage prod"
   },
   "dependencies": {
-    "axios": "^0.19.2",
     "handlebars": "^4.0.10",
     "mailgun-js": "^0.22.0",
     "moment": "^2.24.0",
