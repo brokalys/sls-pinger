@@ -55,13 +55,13 @@ functions:
     description: Process SQS to trigger pinger email sending.
     handler: src/process-sqs.run
     reservedConcurrency: 5
-    # events:
-    #   - sqs:
-    #       arn:
-    #         Fn::GetAtt:
-    #           - PingerQueue
-    #           - Arn
-    #       batchSize: 10
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - PingerQueue
+              - Arn
+          batchSize: 10
 
 custom:
   alerts:
