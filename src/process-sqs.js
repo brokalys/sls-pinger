@@ -149,10 +149,6 @@ export async function run(event, context) {
           .publish({
             Message: 'email',
             MessageAttributes: {
-              sqs: {
-                DataType: 'String',
-                StringValue: 'yes',
-              },
               to: {
                 DataType: 'String',
                 StringValue: data.to,
@@ -175,7 +171,7 @@ export async function run(event, context) {
               },
             },
             MessageStructure: 'string',
-            TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email`,
+            TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
           })
           .promise(),
       ),

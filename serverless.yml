@@ -28,7 +28,7 @@ functions:
     timeout: 4
     handler: src/pinger.run
     events:
-      - sns: pinger
+      - sns: pinger-${self:provider.stage}
     alarms:
       - name: pingerErrors
         namespace: 'AWS/Lambda'
@@ -46,7 +46,7 @@ functions:
     timeout: 10
     handler: src/email.run
     events:
-      - sns: email
+      - sns: email-${self:provider.stage}
     alarms:
       - name: emailErrors
         namespace: 'AWS/Lambda'
