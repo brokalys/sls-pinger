@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "deploy": "serverless deploy",
-    "deploy:ci": "yarn deploy --conceal --stage production"
+    "deploy:ci": "yarn deploy --conceal --stage prod"
   },
   "dependencies": {
     "axios": "^0.19.2",
