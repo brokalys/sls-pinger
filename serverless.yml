@@ -91,7 +91,7 @@ functions:
 custom:
   alerts:
     stages:
-      - production
+      - prod
     nameTemplate: $[functionName]-$[metricName]
     topics:
       ok:
