@@ -132,3 +132,4 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:provider.stage}-pinger
+        FifoQueue: true
