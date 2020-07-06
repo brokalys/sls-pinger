@@ -129,6 +129,7 @@ export async function run(event, context) {
     availableInvocations
       .map((pinger) => {
         const result = pinger.property;
+        result.images = JSON.parse(result.images);
         result.content = nl2br(result.content.replace(/(<([^>]+)>)/gi, ''));
 
         result.unsubscribe_url = getUnsubscribeLink(pinger);
