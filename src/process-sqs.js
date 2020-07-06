@@ -38,6 +38,19 @@ function getUnsubscribeLink(pinger) {
   )}&id=${encodeURIComponent(pinger.id)}`;
 }
 
+function parseImages(img) {
+  if (!img) {
+    return [];
+  }
+
+  if (img instanceof Array) {
+    return img;
+  }
+
+  console.log('images', img);
+  return JSON.parse(img);
+}
+
 export async function run(event, context) {
   const properties = event.Records.map((row) => JSON.parse(row.body)).filter(
     (property) =>
@@ -129,7 +142,7 @@ export async function run(event, context) {
     availableInvocations
       .map((pinger) => {
         const result = pinger.property;
-        result.images = JSON.parse(result.images);
+        result.images = parseImages(result.images);
         result.content = nl2br(result.content.replace(/(<([^>]+)>)/gi, ''));
 
         result.unsubscribe_url = getUnsubscribeLink(pinger);
