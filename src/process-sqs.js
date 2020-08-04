@@ -143,7 +143,9 @@ export async function run(event, context) {
       .map((pinger) => {
         const result = pinger.property;
         result.images = parseImages(result.images);
-        result.content = nl2br(result.content.replace(/(<([^>]+)>)/gi, ''));
+        result.content = nl2br(
+          (result.content || '').replace(/(<([^>]+)>)/gi, ''),
+        );
 
         result.unsubscribe_url = getUnsubscribeLink(pinger);
         result.url = `https://view.brokalys.com/?link=${encodeURIComponent(
