@@ -8,6 +8,8 @@ provider:
   logRetentionInDays: 7
   versionFunctions: false
   stage: ${opt:stage, 'dev'}
+  tags:
+    group: pinger
   iamRoleStatements:
     - Effect: Allow
       Action:
