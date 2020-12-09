@@ -18,5 +18,8 @@ module.exports = {
   entry: slsw.lib.entries,
   externals: [nodeExternals()],
   target: 'node',
-  plugins: [new webpack.DefinePlugin(env), new CopyPlugin(['src/**.html'])],
+  plugins: [
+    new webpack.DefinePlugin(env),
+    new CopyPlugin({ patterns: ['src/**.html'] }),
+  ],
 };

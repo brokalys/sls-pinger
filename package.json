@@ -20,10 +20,10 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.151.0",
-    "copy-webpack-plugin": "^5.1.1",
+    "copy-webpack-plugin": "^6.4.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.0.0",
-    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "husky": ">=4",
     "lint-staged": ">=10",
@@ -31,8 +31,8 @@
     "serverless": "^1.65.0",
     "serverless-plugin-aws-alerts": "^1.4.0",
     "serverless-webpack": "^5.3.1",
-    "webpack": "^4.43.0",
-    "webpack-node-externals": "^1.7.2"
+    "webpack": "^5.10.0",
+    "webpack-node-externals": "^2.5.2"
   },
   "husky": {
     "hooks": {
