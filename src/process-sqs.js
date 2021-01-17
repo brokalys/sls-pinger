@@ -178,10 +178,6 @@ export async function run(event, context) {
                 DataType: 'Number',
                 StringValue: String(data.pinger_id),
               },
-              is_premium: {
-                DataType: 'Boolean',
-                StringValue: data.is_premium,
-              },
               template_id: {
                 DataType: 'String',
                 StringValue: data.template_id,
