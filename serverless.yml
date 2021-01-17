@@ -50,7 +50,7 @@ functions:
   limit-locker:
     name: BrokalysPinger-LimitLocker-${self:provider.stage}
     description: Lock pingers that have reached the monthly lockout threshold.
-    timeout: 2
+    timeout: 3
     handler: src/limit-locker.run
     events:
       - schedule: rate(10 minutes)
