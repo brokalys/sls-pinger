@@ -152,6 +152,7 @@ export async function run(event, context) {
           result.url,
         )}`;
         result.price = numeral(result.price).format('0,0 €');
+        result.is_premium = !!pinger.is_premium;
 
         return {
           to: pinger.email,
@@ -176,6 +177,10 @@ export async function run(event, context) {
               pinger_id: {
                 DataType: 'Number',
                 StringValue: String(data.pinger_id),
+              },
+              is_premium: {
+                DataType: 'Boolean',
+                StringValue: data.is_premium,
               },
               template_id: {
                 DataType: 'String',

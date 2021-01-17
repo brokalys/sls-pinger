@@ -21,7 +21,6 @@ exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const { MessageAttributes } = event.Records[0].Sns;
-  console.log('Input', JSON.stringify(MessageAttributes));
 
   const to = MessageAttributes.to.Value;
   const subject = MessageAttributes.subject.Value;
@@ -40,6 +39,7 @@ exports.run = async (event, context, callback) => {
     subject,
     to,
     html,
+    'h:Reply-To': 'Matiss <matiss@brokalys.com>',
   };
 
   const { insertId } = await connection.query({

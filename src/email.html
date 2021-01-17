@@ -191,7 +191,7 @@
 				{{#if images.[0]}}
 				<tr>
 					<td bgcolor="#ffffff" align="center">
-						<img src="{{ images.[0] }}" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; margin: auto;" class="g-img">
+						<img src="{{ images.[0] }}" width="600" height="" alt="Property image" border="0" align="center" style="width: 100%; max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; margin: auto;" class="g-img">
 					</td>
 				</tr>
 				{{/if}}
@@ -202,8 +202,16 @@
 				<tr>
 					<td bgcolor="#ffffff">
 						<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+							{{#unless is_premium}}
 							<tr>
-								<td style="padding: 40px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+								<td style="padding: 20px 40px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+									<p><strong>Brokalys ir bezmaksas NĪ paziņojumu un tirgus apskates rīks. Tā uzturēšana man izmaksā vidēji $16.42/mēnesī. Tikai ar tavu palīdzību es varu paturēt šo servisu bezmaksas. <a href="https://www.paypal.com/paypalme/matissjanisaboltins?locale.x=en_US">Atbalstīt Brokalys.</a></strong></p>
+								</td>
+							</tr>
+							{{/unless}}
+
+							<tr>
+								<td style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
 									<h1 style="margin: 0 0 10px 0; font-family: sans-serif; font-size: 24px; line-height: 27px; color: #333333; font-weight: normal;">Jauns sludinājums</h1>
 									<p style="margin: 0 0 10px 0;"><strong>Cena:</strong> {{ price }} EUR</p>
 									{{#if rooms}}<p style="margin: 0 0 10px 0;"><strong>Istabu skaits:</strong> {{ rooms }}</p>{{/if}}
