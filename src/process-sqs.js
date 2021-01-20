@@ -47,7 +47,6 @@ function parseImages(img) {
     return img;
   }
 
-  console.log('images', img);
   return JSON.parse(img);
 }
 
@@ -125,13 +124,6 @@ export async function run(event, context) {
         inside([property.lat, property.lng], parseLocation(pinger.location)),
       );
 
-    console.log(
-      'Potential invocations',
-      pingers.length,
-      'for property',
-      property.url,
-    );
-
     return pingers.map((pinger) => ({ ...pinger, property }));
   });
 
@@ -159,38 +151,62 @@ export async function run(event, context) {
           pinger_id: pinger.id,
           template_id: 'email',
           template_variables: result,
+          type: pinger.type,
         };
       })
-      .map((data) =>
-        sns
-          .publish({
-            Message: 'email',
-            MessageAttributes: {
-              to: {
-                DataType: 'String',
-                StringValue: data.to,
-              },
-              subject: {
-                DataType: 'String',
-                StringValue: 'Jauns PINGER sludinājums',
-              },
-              pinger_id: {
-                DataType: 'Number',
-                StringValue: String(data.pinger_id),
-              },
-              template_id: {
-                DataType: 'String',
-                StringValue: data.template_id,
-              },
-              template_variables: {
-                DataType: 'String',
-                StringValue: JSON.stringify(data.template_variables),
-              },
-            },
-            MessageStructure: 'string',
-            TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
-          })
-          .promise(),
-      ),
+      .map(performAction),
   );
+}
+
+function performAction(data) {
+  if (data.type === 'immediate') {
+    return publishSns(data);
+  }
+
+  return queuePinger(data);
+}
+
+function publishSns(data) {
+  return sns
+    .publish({
+      Message: 'email',
+      MessageAttributes: {
+        to: {
+          DataType: 'String',
+          StringValue: data.to,
+        },
+        subject: {
+          DataType: 'String',
+          StringValue: 'Jauns PINGER sludinājums',
+        },
+        pinger_id: {
+          DataType: 'Number',
+          StringValue: String(data.pinger_id),
+        },
+        template_id: {
+          DataType: 'String',
+          StringValue: data.template_id,
+        },
+        template_variables: {
+          DataType: 'String',
+          StringValue: JSON.stringify(data.template_variables),
+        },
+      },
+      MessageStructure: 'string',
+      TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
+    })
+    .promise();
+}
+
+function queuePinger(data) {
+  return connection.query({
+    sql: `
+      INSERT INTO pinger_queue
+      SET ?
+   `,
+    values: {
+      pinger_id: data.pinger_id,
+      data: JSON.stringify(data.template_variables),
+    },
+  });
 }
