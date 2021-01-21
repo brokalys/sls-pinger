@@ -1,10 +1,10 @@
-import { query } from 'serverless-mysql';
-import { sns } from 'aws-sdk';
+import * as db from './shared/db';
+import sns from './shared/sns';
 import { run } from './process-sqs';
 import { createPingerFixture, createPropertyFixture } from '__fixtures__';
 
-jest.mock('aws-sdk');
-jest.mock('serverless-mysql');
+jest.mock('./shared/db');
+jest.mock('./shared/sns');
 
 function createMockRecords(records) {
   return records.map((data) => ({
@@ -19,7 +19,7 @@ describe('process-sqs', () => {
     const event = {
       Records: createMockRecords([createPropertyFixture()]),
     };
-    query.mockReturnValue([
+    db.query.mockReturnValue([
       createPingerFixture(),
       createPingerFixture({
         rooms_min: 4,
@@ -29,7 +29,7 @@ describe('process-sqs', () => {
     await run(event);
 
     expect(sns.publish).toBeCalledTimes(1);
-    expect(query).toBeCalledTimes(1);
+    expect(db.query).toBeCalledTimes(1);
   });
 
   test.each(['daily', 'weekly', 'monthly'])(
@@ -38,7 +38,7 @@ describe('process-sqs', () => {
       const event = {
         Records: createMockRecords([createPropertyFixture()]),
       };
-      query.mockReturnValue([
+      db.query.mockReturnValue([
         createPingerFixture({ type }),
         createPingerFixture({
           rooms_min: 4,
@@ -49,7 +49,7 @@ describe('process-sqs', () => {
       await run(event);
 
       expect(sns.publish).not.toBeCalled();
-      expect(query).toBeCalledWith(
+      expect(db.query).toBeCalledWith(
         expect.objectContaining({
           sql: expect.stringContaining('INSERT INTO pinger_queue'),
         }),
@@ -65,6 +65,6 @@ describe('process-sqs', () => {
     await run(event);
 
     expect(sns.publish).not.toBeCalled();
-    expect(query).toBeCalledTimes(1);
+    expect(db.query).toBeCalledTimes(1);
   });
 });

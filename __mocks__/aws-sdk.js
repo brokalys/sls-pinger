@@ -4,6 +4,9 @@ export const sns = {
 
 const aws = {
   SNS: jest.fn().mockReturnValue(sns),
+  config: {
+    update: jest.fn(),
+  },
 };
 
 export default aws;
