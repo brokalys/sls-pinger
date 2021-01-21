@@ -63,6 +63,8 @@ export async function run(event, context = {}) {
               }),
             },
           },
+          MessageStructure: 'string',
+          TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
         })
         .promise(),
     ),
