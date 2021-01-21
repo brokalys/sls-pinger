@@ -12,6 +12,8 @@ const connection = serverlessMysql({
   },
 });
 
+export const query = connection.query;
+
 export function getPingersByType(type) {
   return connection.query({
     sql: `

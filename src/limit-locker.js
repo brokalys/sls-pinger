@@ -1,25 +1,11 @@
-const serverlessMysql = require('serverless-mysql');
-const moment = require('moment');
-const AWS = require('aws-sdk');
-const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
-
-AWS.config.update({ region: process.env.AWS_REGION });
-
-const connection = serverlessMysql({
-  config: {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    timezone: 'Z',
-    typeCast: true,
-  },
-});
+import moment from 'moment';
+import * as db from './shared/db';
+import sns from './shared/sns';
 
 const MAX_MONTHLY_EMAILS = 100;
 
 async function isMonthlyLimitWarningSent(email) {
-  const [{ count }] = await connection.query({
+  const [{ count }] = await db.query({
     sql: `
       SELECT COUNT(*) as count
       FROM pinger_log
@@ -41,7 +27,7 @@ exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const emails = (
-    await connection.query(
+    await db.query(
       `
     SELECT em.email
     FROM pinger_log lo
@@ -65,7 +51,7 @@ exports.run = async (event, context, callback) => {
     return;
   }
 
-  await connection.query(
+  await db.query(
     `
     UPDATE pinger_emails
     SET limit_reached_at = NOW()

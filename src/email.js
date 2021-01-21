@@ -1,21 +1,7 @@
-const fs = require('fs');
-const serverlessMysql = require('serverless-mysql');
-const mailgun = require('mailgun-js')({
-  apiKey: process.env.MAILGUN_API_KEY,
-  domain: process.env.MAILGUN_DOMAIN,
-});
-const Handlebars = require('handlebars');
-
-const connection = serverlessMysql({
-  config: {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    timezone: 'Z',
-    typeCast: true,
-  },
-});
+import fs from 'fs';
+import Handlebars from 'handlebars';
+import * as db from './shared/db';
+import mailgun from './shared/mailgun';
 
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -42,7 +28,7 @@ exports.run = async (event, context, callback) => {
     'h:Reply-To': 'Matiss <matiss@brokalys.com>',
   };
 
-  const { insertId } = await connection.query({
+  const { insertId } = await db.query({
     sql: 'INSERT INTO pinger_log SET ?',
     values: {
       to: data.to,
@@ -57,7 +43,7 @@ exports.run = async (event, context, callback) => {
 
   const email = await mailgun.messages().send(data);
 
-  await connection.query({
+  await db.query({
     sql: `UPDATE pinger_log SET sent_at = NOW(), response = ? WHERE id = ?`,
     values: [JSON.stringify(email), insertId],
   });

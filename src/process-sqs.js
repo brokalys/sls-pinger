@@ -1,20 +1,8 @@
-import AWS from 'aws-sdk';
-import serverlessMysql from 'serverless-mysql';
 import moment from 'moment';
 import numeral from 'numeral';
 import inside from 'point-in-polygon';
-
-const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
-const connection = serverlessMysql({
-  config: {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    timezone: 'Z',
-    typeCast: true,
-  },
-});
+import * as db from './shared/db';
+import sns from './shared/sns';
 
 function parseLocation(location) {
   return location
@@ -63,7 +51,7 @@ export async function run(event, context) {
     return;
   }
 
-  const results = await connection.query({
+  const results = await db.query({
     sql: `
     SELECT *
     FROM pinger_emails
@@ -199,7 +187,7 @@ function publishSns(data) {
 }
 
 function queuePinger(data) {
-  return connection.query({
+  return db.query({
     sql: `
       INSERT INTO pinger_queue
       SET ?
