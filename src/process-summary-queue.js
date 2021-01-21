@@ -29,9 +29,14 @@ export async function run(event, context = {}) {
   // Filter PINGERS that have properties
   const pingersWithProperties = pingers.filter((data) => !!properties[data.id]);
 
+  // What if no matches?
+  if (pingersWithProperties.length === 0) {
+    return;
+  }
+
   // Mark property queue entries as "locked" so we don't
   // send duplicate emails in case of an error
-  db.lockPropertyQueueItems(propertyQueueIds);
+  await db.lockPropertyQueueItems(propertyQueueIds);
 
   // Publish SNS notification to send email for each PINGER that has properties
   await Promise.all(
@@ -59,7 +64,10 @@ export async function run(event, context = {}) {
             template_variables: {
               DataType: 'String',
               StringValue: JSON.stringify({
-                properties: properties[pinger.id],
+                properties: properties[pinger.id].map((data) => ({
+                  url: data.url,
+                  price: data.price,
+                })),
               }),
             },
           },
@@ -71,5 +79,5 @@ export async function run(event, context = {}) {
   );
 
   // Delete the property queue from DB
-  db.deletePropertyQueueItems(propertyQueueIds);
+  await db.deletePropertyQueueItems(propertyQueueIds);
 }

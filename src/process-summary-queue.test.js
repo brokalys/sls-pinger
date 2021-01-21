@@ -25,6 +25,28 @@ describe('process-summary-queue', () => {
     expect(sns.publish).toBeCalledTimes(1);
   });
 
+  test('does not send a SNS notification if there are no PINGER', async () => {
+    db.getPingersByType.mockReturnValue([]);
+    db.getPropertyQueueForPingers.mockReturnValue([
+      createPropertyQueueItemFixture({ id: 1 }),
+      createPropertyQueueItemFixture({ id: 2 }),
+      createPropertyQueueItemFixture({ id: 3 }),
+    ]);
+
+    await run({ type: 'daily' });
+
+    expect(sns.publish).toBeCalledTimes(0);
+  });
+
+  test('does not send a SNS notification if there are no properties', async () => {
+    db.getPingersByType.mockReturnValue([createPingerFixture()]);
+    db.getPropertyQueueForPingers.mockReturnValue([]);
+
+    await run({ type: 'daily' });
+
+    expect(sns.publish).toBeCalledTimes(0);
+  });
+
   test('sends multiple email SNS notifications', async () => {
     db.getPingersByType.mockReturnValue([
       createPingerFixture({ id: 1 }),
