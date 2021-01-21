@@ -30,7 +30,7 @@ exports.run = async (event, context, callback) => {
     ? JSON.parse(MessageAttributes.template_variables.Value)
     : {};
 
-  const content = fs.readFileSync(`src/${templateId}.html`, 'utf8');
+  const content = fs.readFileSync(`src/templates/${templateId}.html`, 'utf8');
   const template = Handlebars.compile(content);
   const html = template(templateVariables);
 

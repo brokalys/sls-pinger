@@ -66,6 +66,24 @@ functions:
               - PingerQueue
               - Arn
           batchSize: 10
+  process-summary-queue:
+    name: BrokalysPinger-ProcessSummaryQueue-${self:provider.stage}
+    description: Process pinger summary queue
+    handler: src/process-summary-queue.run
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: rate(1 day)
+          input:
+            type: daily
+      - schedule:
+          rate: rate(7 days)
+          input:
+            type: weekly
+      - schedule:
+          rate: cron(0 0 1 * * *)
+          input:
+            type: monthly
 
 custom:
   alerts:

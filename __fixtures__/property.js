@@ -8,3 +8,13 @@ export function createPropertyFixture(customData = {}) {
     ...customData,
   };
 }
+
+export function createPropertyQueueItemFixture(customData = {}) {
+  return {
+    id: 1,
+    pinger_id: 1,
+    data: JSON.stringify(createPropertyFixture(customData.data)),
+    locked: 0,
+    ...customData,
+  };
+}

@@ -1,5 +1,6 @@
 export function createPingerFixture(customData = {}) {
   return {
+    id: 1,
     categories: ['apartment'],
     types: ['sell'],
     price_min: 100000,

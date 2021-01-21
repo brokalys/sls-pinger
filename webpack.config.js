@@ -20,6 +20,6 @@ module.exports = {
   target: 'node',
   plugins: [
     new webpack.DefinePlugin(env),
-    new CopyPlugin({ patterns: ['src/**.html'] }),
+    new CopyPlugin({ patterns: ['src/**/*.html'] }),
   ],
 };

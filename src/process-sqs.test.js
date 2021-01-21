@@ -15,7 +15,7 @@ function createMockRecords(records) {
 describe('process-sqs', () => {
   afterEach(jest.clearAllMocks);
 
-  it('publishes a new SNS message if PINGER falls within defined bounds', async () => {
+  test('publishes a new SNS message if PINGER falls within defined bounds', async () => {
     const event = {
       Records: createMockRecords([createPropertyFixture()]),
     };
@@ -32,7 +32,7 @@ describe('process-sqs', () => {
     expect(query).toBeCalledTimes(1);
   });
 
-  it.each(['daily', 'weekly', 'monthly'])(
+  test.each(['daily', 'weekly', 'monthly'])(
     'writes a new queue entry if pinger invocation is %j',
     async (type) => {
       const event = {
@@ -57,7 +57,7 @@ describe('process-sqs', () => {
     },
   );
 
-  it('does not publish an SNS message if PINGER falls outside of defined bounds', async () => {
+  test('does not publish an SNS message if PINGER falls outside of defined bounds', async () => {
     const event = {
       Records: createMockRecords([createPropertyFixture({ lat: 59.9965 })]),
     };
