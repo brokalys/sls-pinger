@@ -23,6 +23,7 @@ describe('process-summary-queue', () => {
     await run({ type: 'daily' });
 
     expect(sns.publish).toBeCalledTimes(1);
+    expect(sns.publish.mock.calls[0]).toMatchSnapshot();
   });
 
   test('does not send a SNS notification if there are no PINGER', async () => {

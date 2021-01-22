@@ -5,6 +5,9 @@ export function createPropertyFixture(customData = {}) {
     lat: 56.9965,
     lng: 24.245176,
     price: 100000,
+    url: 'https://brokalys.com/',
+    area: 45,
+    rooms: 2,
     ...customData,
   };
 }

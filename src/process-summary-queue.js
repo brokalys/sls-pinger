@@ -64,10 +64,13 @@ export async function run(event, context = {}) {
             template_variables: {
               DataType: 'String',
               StringValue: JSON.stringify({
-                properties: properties[pinger.id].map((data) => ({
-                  url: data.url,
-                  price: data.price,
-                })),
+                is_premium: pinger.is_premium,
+                properties: properties[pinger.id].map((data) => [
+                  data.url,
+                  data.price,
+                  data.rooms,
+                  data.area,
+                ]),
               }),
             },
           },

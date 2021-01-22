@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`process-summary-queue sends an email SNS notification 1`] = `
+Array [
+  Object {
+    "Message": "email",
+    "MessageAttributes": Object {
+      "pinger_id": Object {
+        "DataType": "Number",
+        "StringValue": "1",
+      },
+      "subject": Object {
+        "DataType": "String",
+        "StringValue": "Jauni PINGER sludinājumi",
+      },
+      "template_id": Object {
+        "DataType": "String",
+        "StringValue": "summary",
+      },
+      "template_variables": Object {
+        "DataType": "String",
+        "StringValue": "{\\"properties\\":[[\\"https://brokalys.com/\\",100000,2,45],[\\"https://brokalys.com/\\",100000,2,45],[\\"https://brokalys.com/\\",100000,2,45]]}",
+      },
+      "to": Object {
+        "DataType": "String",
+        "StringValue": undefined,
+      },
+    },
+    "MessageStructure": "string",
+    "TargetArn": "arn:aws:sns:undefined:173751334418:email-undefined",
+  },
+]
+`;
