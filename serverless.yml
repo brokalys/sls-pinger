@@ -73,11 +73,11 @@ functions:
     reservedConcurrency: 1
     events:
       - schedule:
-          rate: rate(1 day)
+          rate: rate(0 9 * * ? *)
           input:
             type: daily
       - schedule:
-          rate: rate(7 days)
+          rate: rate(0 9 * * MON *)
           input:
             type: weekly
       - schedule:
