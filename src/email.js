@@ -1,7 +1,7 @@
 import fs from 'fs';
 import Handlebars from 'handlebars';
 import * as db from './shared/db';
-import mailgun from './shared/mailgun';
+import ses from './shared/ses';
 
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -25,7 +25,7 @@ exports.run = async (event, context, callback) => {
     subject,
     to,
     html,
-    'h:Reply-To': 'Matiss <matiss@brokalys.com>',
+    replyTo: 'Matiss <matiss@brokalys.com>',
   };
 
   const { insertId } = await db.query({
@@ -41,11 +41,28 @@ exports.run = async (event, context, callback) => {
     },
   });
 
-  const email = await mailgun.messages().send(data);
+  ses
+    .sendEmail({
+      Destination: {
+        ToAddresses: [data.to],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: data.html,
+          },
+        },
+        Subject: { Data: data.subject },
+      },
+      ReplyToAddresses: [data.replyTo],
+      Source: data.from,
+    })
+    .promise();
 
   await db.query({
-    sql: `UPDATE pinger_log SET sent_at = NOW(), response = ? WHERE id = ?`,
-    values: [JSON.stringify(email), insertId],
+    sql: `UPDATE pinger_log SET sent_at = NOW() WHERE id = ?`,
+    values: [insertId],
   });
 
   callback(null, 'Success');
