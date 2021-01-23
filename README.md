@@ -14,6 +14,18 @@
 yarn install
 ```
 
+## Testing
+
+```sh
+yarn test
+```
+
+## Linting
+
+```sh
+yarn lint
+```
+
 ## Deployment
 
 Travis takes care of deployments. The following command can be used for doing manual deployments.
