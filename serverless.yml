@@ -15,6 +15,10 @@ provider:
       Action:
         - SNS:Publish
       Resource: 'arn:aws:sns:eu-west-1:*:*'
+    - Effect: Allow
+      Action:
+        - SES:SendEmail
+      Resource: 'arn:aws:ses:eu-west-1:*:*'
   environment:
     STAGE: ${opt:stage, 'dev'}
 
