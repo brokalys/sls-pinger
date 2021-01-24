@@ -33,6 +33,7 @@ functions:
       - sns: email-${self:provider.stage}
     alarms:
       - name: emailErrors
+        description: 'Pinger: email sending errors'
         namespace: 'AWS/Lambda'
         metric: Errors
         threshold: 1
@@ -43,6 +44,7 @@ functions:
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
       - name: emailInvocations
+        description: 'Pinger: email sending invocations'
         namespace: 'AWS/Lambda'
         metric: Invocations
         threshold: 800
@@ -59,6 +61,18 @@ functions:
     handler: src/limit-locker.run
     events:
       - schedule: rate(10 minutes)
+    alarms:
+      - name: limitLockerErrors
+        description: 'Pinger: limit locker errors'
+        namespace: 'AWS/Lambda'
+        metric: Errors
+        threshold: 1
+        statistic: Sum
+        period: 300 # 5 minutes
+        evaluationPeriods: 1
+        datapointsToAlarm: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: notBreaching
   process-sqs:
     name: BrokalysPinger-ProcessSqs-${self:provider.stage}
     description: Process SQS to trigger pinger email sending.
@@ -91,6 +105,7 @@ functions:
             type: monthly
     alarms:
       - name: processQueueErrors
+        description: 'Pinger: summary queue processing errors'
         namespace: 'AWS/Lambda'
         metric: Errors
         threshold: 1
