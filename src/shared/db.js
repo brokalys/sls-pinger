@@ -12,6 +12,9 @@ const connection = serverlessMysql({
   },
 });
 
+const MAX_MONTHLY_EMAILS = 100;
+const startOfMonth = moment.utc().startOf('month').toDate();
+
 export const query = connection.query;
 
 export function getPingersByType(type) {
@@ -23,7 +26,7 @@ export function getPingersByType(type) {
         AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
         AND type = ?
    `,
-    values: [moment.utc().startOf('month').toDate(), type],
+    values: [startOfMonth, type],
     typeCast(field, next) {
       if (field.type === 'TINY' && field.length === 1) {
         return field.string() === '1';
@@ -69,4 +72,48 @@ export function deletePropertyQueueItems(itemIds) {
    `,
     values: [itemIds],
   });
+}
+
+export async function getEmailsThatShouldBeLimitLocked() {
+  return (
+    await connection.query(
+      `
+        SELECT em.email
+        FROM pinger_log lo
+        INNER JOIN pinger_emails em ON em.id = lo.pinger_id
+        WHERE lo.created_at >= ?
+          AND em.is_premium = false
+        GROUP BY em.email
+        HAVING COUNT(*) >= ?
+      `,
+      [startOfMonth, MAX_MONTHLY_EMAILS],
+    )
+  ).map((row) => row.email);
+}
+
+export async function getEmailsWithLimitLockerNotification(emails) {
+  return (
+    await connection.query({
+      sql: `
+        SELECT pl.to
+        FROM pinger_log pl
+        WHERE pl.created_at >= ?
+          AND pl.email_type = ?
+        GROUP BY pl.to
+      `,
+      values: [startOfMonth, 'limit-notification'],
+    })
+  ).map((row) => row.to);
+}
+
+export function limitLockPingerEmails(emails) {
+  return connection.query(
+    `
+      UPDATE pinger_emails
+      SET limit_reached_at = NOW()
+      WHERE email IN (?)
+        AND (limit_reached_at < ? OR limit_reached_at IS NULL)
+    `,
+    [emails, startOfMonth],
+  );
 }

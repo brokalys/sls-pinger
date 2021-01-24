@@ -2,64 +2,35 @@ import moment from 'moment';
 import * as db from './shared/db';
 import sns from './shared/sns';
 
-const MAX_MONTHLY_EMAILS = 100;
-
-async function isMonthlyLimitWarningSent(email) {
-  const [{ count }] = await db.query({
-    sql: `
-      SELECT COUNT(*) as count
-      FROM pinger_log
-      WHERE to = ?
-        AND created_at >= ?
-        AND email_type = ?
-    `,
-    values: [
-      email,
-      moment.utc().startOf('month').toDate(),
-      'limit-notification',
-    ],
-  });
-
-  return count > 0;
-}
-
-exports.run = async (event, context, callback) => {
+exports.run = async (event, context = {}) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const emails = (
-    await db.query(
-      `
-    SELECT em.email
-    FROM pinger_log lo
-    INNER JOIN pinger_emails em ON em.id = lo.pinger_id
-    WHERE lo.created_at >= ?
-      AND em.is_premium = false
-      AND (em.limit_reached_at < ? OR em.limit_reached_at IS NULL)
-    GROUP BY em.email
-    HAVING COUNT(*) >= ?
-  `,
-      [
-        moment.utc().startOf('month').toDate(),
-        moment.utc().startOf('month').toDate(),
-        MAX_MONTHLY_EMAILS,
-      ],
-    )
-  ).map((row) => row.email);
+  // Get all emails that should be in the `locked` state
+  const lockedEmails = await db.getEmailsThatShouldBeLimitLocked();
 
-  if (!emails.length) {
-    callback(null, 'Nothing to do');
+  if (!lockedEmails.length) {
     return;
   }
 
-  await db.query(
-    `
-    UPDATE pinger_emails
-    SET limit_reached_at = NOW()
-    WHERE email IN (?)
-  `,
-    [emails],
+  // Lock all the emails that have not yet been locked
+  await db.limitLockPingerEmails(lockedEmails);
+
+  // Emails that have received limit-locker notification email
+  const limitNotificationEmails = await db.getEmailsWithLimitLockerNotification(
+    lockedEmails,
   );
 
+  // Filter emails that have NOT received the notification
+  const emails = lockedEmails.filter(
+    (email) => !limitNotificationEmails.includes(email),
+  );
+
+  // TODO: remove the date hack after February
+  if (!emails.length || moment().isBefore('2021-02-01', 'month')) {
+    return;
+  }
+
+  // Send all the emails
   await Promise.all(
     emails.map((email) => {
       sns
@@ -85,6 +56,4 @@ exports.run = async (event, context, callback) => {
         .promise();
     }),
   );
-
-  callback(null, 'Success');
 };

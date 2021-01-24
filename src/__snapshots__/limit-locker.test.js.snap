@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`limit-locker does not send a email SNS notification for the customer that has already received one 1`] = `
+Array [
+  Object {
+    "Message": "email",
+    "MessageAttributes": Object {
+      "subject": Object {
+        "DataType": "String",
+        "StringValue": "Brokalys ikmēneša e-pastu limits ir sasniegts",
+      },
+      "template_id": Object {
+        "DataType": "String",
+        "StringValue": "limit-notification-email",
+      },
+      "to": Object {
+        "DataType": "String",
+        "StringValue": "test+2@brokalys.com",
+      },
+    },
+    "MessageStructure": "string",
+    "TargetArn": "arn:aws:sns:undefined:173751334418:email-undefined",
+  },
+]
+`;
+
+exports[`limit-locker sends an email SNS notification 1`] = `
+Array [
+  Object {
+    "Message": "email",
+    "MessageAttributes": Object {
+      "subject": Object {
+        "DataType": "String",
+        "StringValue": "Brokalys ikmēneša e-pastu limits ir sasniegts",
+      },
+      "template_id": Object {
+        "DataType": "String",
+        "StringValue": "limit-notification-email",
+      },
+      "to": Object {
+        "DataType": "String",
+        "StringValue": "test+1@brokalys.com",
+      },
+    },
+    "MessageStructure": "string",
+    "TargetArn": "arn:aws:sns:undefined:173751334418:email-undefined",
+  },
+]
+`;
