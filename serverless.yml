@@ -26,6 +26,7 @@ functions:
   email:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
+    reservedConcurrency: 4
     timeout: 10
     handler: src/email.run
     events:
