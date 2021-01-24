@@ -41,7 +41,7 @@ exports.run = async (event, context, callback) => {
     },
   });
 
-  ses
+  await ses
     .sendEmail({
       Destination: {
         ToAddresses: [data.to],
