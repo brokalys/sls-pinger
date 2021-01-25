@@ -41,46 +41,58 @@ export async function run(event, context = {}) {
   // Publish SNS notification to send email for each PINGER that has properties
   await Promise.all(
     pingersWithProperties.map((pinger) =>
-      sns
-        .publish({
-          Message: 'email',
-          MessageAttributes: {
-            to: {
-              DataType: 'String',
-              StringValue: pinger.email,
-            },
-            subject: {
-              DataType: 'String',
-              StringValue: 'Jauni PINGER sludinājumi',
-            },
-            pinger_id: {
-              DataType: 'Number',
-              StringValue: String(pinger.id),
-            },
-            template_id: {
-              DataType: 'String',
-              StringValue: 'summary',
-            },
-            template_variables: {
-              DataType: 'String',
-              StringValue: JSON.stringify({
-                is_premium: pinger.is_premium,
-                properties: properties[pinger.id].map((data) => [
-                  data.url,
-                  data.price,
-                  data.rooms,
-                  data.area,
-                ]),
-              }),
-            },
-          },
-          MessageStructure: 'string',
-          TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
-        })
-        .promise(),
+      Promise.all([
+        sendEmail(pinger, properties[pinger.id]),
+        db.createPingerStatsEntry(
+          pinger.id,
+          properties[pinger.id].map(
+            ({ calc_price_per_sqm }) => calc_price_per_sqm,
+          ),
+        ),
+      ]),
     ),
   );
 
   // Delete the property queue from DB
   await db.deletePropertyQueueItems(propertyQueueIds);
+}
+
+function sendEmail(pinger, properties) {
+  return sns
+    .publish({
+      Message: 'email',
+      MessageAttributes: {
+        to: {
+          DataType: 'String',
+          StringValue: pinger.email,
+        },
+        subject: {
+          DataType: 'String',
+          StringValue: 'Jauni PINGER sludinājumi',
+        },
+        pinger_id: {
+          DataType: 'Number',
+          StringValue: String(pinger.id),
+        },
+        template_id: {
+          DataType: 'String',
+          StringValue: 'summary',
+        },
+        template_variables: {
+          DataType: 'String',
+          StringValue: JSON.stringify({
+            is_premium: pinger.is_premium,
+            properties: properties.map((data) => [
+              data.url,
+              data.price,
+              data.rooms,
+              data.area,
+            ]),
+          }),
+        },
+      },
+      MessageStructure: 'string',
+      TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
+    })
+    .promise();
 }

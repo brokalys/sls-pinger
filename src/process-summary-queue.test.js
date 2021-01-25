@@ -26,6 +26,18 @@ describe('process-summary-queue', () => {
     expect(sns.publish.mock.calls[0]).toMatchSnapshot();
   });
 
+  test('inserts an entry into the stats table', async () => {
+    db.getPingersByType.mockReturnValue([createPingerFixture()]);
+    db.getPropertyQueueForPingers.mockReturnValue([
+      createPropertyQueueItemFixture(),
+    ]);
+
+    await run({ type: 'daily' });
+
+    expect(db.createPingerStatsEntry).toBeCalledTimes(1);
+    expect(db.createPingerStatsEntry.mock.calls[0]).toMatchSnapshot();
+  });
+
   test('does not send a SNS notification if there are no PINGER', async () => {
     db.getPingersByType.mockReturnValue([]);
     db.getPropertyQueueForPingers.mockReturnValue([

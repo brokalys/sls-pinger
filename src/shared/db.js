@@ -117,3 +117,16 @@ export function limitLockPingerEmails(emails) {
     [emails, startOfMonth],
   );
 }
+
+export function createPingerStatsEntry(pingerId, data) {
+  return connection.query(
+    `
+      INSERT INTO pinger_property_stats
+      SET ?
+    `,
+    {
+      pinger_id: pingerId,
+      data,
+    },
+  );
+}

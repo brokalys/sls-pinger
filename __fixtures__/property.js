@@ -8,6 +8,7 @@ export function createPropertyFixture(customData = {}) {
     url: 'https://brokalys.com/',
     area: 45,
     rooms: 2,
+    calc_price_per_sqm: 122.32,
     ...customData,
   };
 }

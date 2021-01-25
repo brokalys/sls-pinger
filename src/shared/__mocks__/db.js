@@ -8,3 +8,4 @@ export const getEmailsWithLimitLockerNotification = jest
   .fn()
   .mockReturnValue([]);
 export const limitLockPingerEmails = jest.fn();
+export const createPingerStatsEntry = jest.fn();

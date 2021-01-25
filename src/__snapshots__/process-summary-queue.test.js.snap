@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`process-summary-queue inserts an entry into the stats table 1`] = `
+Array [
+  1,
+  Array [
+    122.32,
+  ],
+]
+`;
+
 exports[`process-summary-queue sends an email SNS notification 1`] = `
 Array [
   Object {
