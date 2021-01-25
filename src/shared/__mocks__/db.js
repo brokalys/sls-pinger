@@ -13,3 +13,4 @@ export const logPingerAttempt = jest.fn();
 export const updatePingerAttemptTimestamp = jest.fn();
 export const getAvailablePingers = jest.fn().mockReturnValue([]);
 export const queuePingerForSummaryEmail = jest.fn();
+export const getPropertyStats = jest.fn().mockReturnValue([]);

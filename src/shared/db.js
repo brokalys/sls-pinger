@@ -178,3 +178,23 @@ export function queuePingerForSummaryEmail(pingerId, data) {
     },
   });
 }
+
+export function getPropertyStats(pingerIds) {
+  return connection.query({
+    sql: `
+      SELECT *
+      FROM pinger_property_stats
+      WHERE created_at >= DATE_ADD(CURDATE(), INTERVAL -12 DAY)
+        AND pinger_id IN (?)
+      ORDER BY created_at DESC
+   `,
+    values: [pingerIds],
+    typeCast(field, next) {
+      if (field.name === 'data') {
+        return JSON.parse(field.string());
+      }
+
+      return next();
+    },
+  });
+}

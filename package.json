@@ -15,7 +15,8 @@
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
     "point-in-polygon": "^1.0.1",
-    "serverless-mysql": "^1.5.3"
+    "serverless-mysql": "^1.5.3",
+    "vega": "^5.19.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -30,6 +31,7 @@
     "html-minimizer-webpack-plugin": "^2.1.0",
     "husky": ">=4",
     "jest": "^26.6.3",
+    "jest-canvas-mock": "^2.3.0",
     "lint-staged": ">=10",
     "prettier": "^2.0.1",
     "serverless": "^1.65.0",

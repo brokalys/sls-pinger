@@ -10,7 +10,7 @@
           "to": { "Type": "String", "Value": "matiss@brokalys.com" },
           "template_variables": {
             "Type": "String",
-            "Value": "{\"is_premium\":true,\"unsubscribe_url\":\"https://unsubscribe.com\",\"properties\":[[\"https://view.brokalys.com/?link=https%3A%2F%2Fwww.ss.com%2Fmsg%2Flv%2Freal-estate%2Fflats%2Friga%2Fcentre%2Fcbojk.html\",\"22,000\",1,20],[\"https://view.brokalys.com/?link=https%3A%2F%2Fwww.ss.com%2Fmsg%2Flv%2Freal-estate%2Fflats%2Friga%2Fcentre%2Fcbojk.html\",\"200,000\",4,90],[\"https://view.brokalys.com/?link=https%3A%2F%2Fwww.ss.com%2Fmsg%2Flv%2Freal-estate%2Fflats%2Friga%2Fcentre%2Fcbojk.html\",\"45,000\",2,30]]}"
+            "Value": "{\"is_premium\":true,\"unsubscribe_url\":\"https://unsubscribe.com\",\"hero_img_url\":\"https://dev-pinger-charts.s3.eu-west-1.amazonaws.com/1611525583704-test.svg?AWSAccessKeyId=AKIASQ5DC6YJF4NHQT4R&Expires=1643083184&Signature=Gt8qHH8pNZPVsDvnGuGbyZ8pw30%3D\",\"properties\":[[\"https://view.brokalys.com/?link=https%3A%2F%2Fwww.ss.com%2Fmsg%2Flv%2Freal-estate%2Fflats%2Friga%2Fcentre%2Fcbojk.html\",\"22,000\",1,20],[\"https://view.brokalys.com/?link=https%3A%2F%2Fwww.ss.com%2Fmsg%2Flv%2Freal-estate%2Fflats%2Friga%2Fcentre%2Fcbojk.html\",\"200,000\",4,90],[\"https://view.brokalys.com/?link=https%3A%2F%2Fwww.ss.com%2Fmsg%2Flv%2Freal-estate%2Fflats%2Friga%2Fcentre%2Fcbojk.html\",\"45,000\",2,30]]}"
           }
         }
       }

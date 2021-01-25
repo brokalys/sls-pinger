@@ -189,6 +189,35 @@
           width="100%"
           style="max-width: 600px"
         >
+          <!-- Hero Image, Flush : BEGIN -->
+          {{#if hero_img_url}}
+          <tr>
+            <td bgcolor="#ffffff" align="center">
+              <img
+                src="{{ hero_img_url }}"
+                width="600"
+                height=""
+                alt="Price change over time"
+                border="0"
+                align="center"
+                style="
+                  width: 100%;
+                  max-width: 600px;
+                  height: auto;
+                  background: #ffffff;
+                  font-family: sans-serif;
+                  font-size: 15px;
+                  line-height: 20px;
+                  color: #555555;
+                  margin: auto;
+                "
+                class="g-img"
+              />
+            </td>
+          </tr>
+          {{/if}}
+          <!-- Hero Image, Flush : END -->
+
           <!-- 1 Column Text + Button : BEGIN -->
           <tr>
             <td bgcolor="#ffffff">

@@ -19,6 +19,11 @@ provider:
       Action:
         - SES:SendEmail
       Resource: 'arn:aws:ses:eu-west-1:*:*'
+    - Effect: Allow
+      Action:
+        - S3:PutObject
+        - S3:GetObject
+      Resource: 'arn:aws:s3:::${self:provider.stage}-pinger-charts/*'
   environment:
     STAGE: ${opt:stage, 'dev'}
 
@@ -151,3 +156,15 @@ resources:
       Properties:
         QueueName: ${self:provider.stage}-pinger.fifo
         FifoQueue: true
+    ChartBucket:
+      Type: AWS::S3::Bucket
+      Description: Generated charts for PINGER summary emails.
+      Properties:
+        BucketName: ${self:provider.stage}-pinger-charts
+        AccessControl: AuthenticatedRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT]
+              AllowedOrigins: ['*']
+              MaxAge: '3600'

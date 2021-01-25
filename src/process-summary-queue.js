@@ -1,4 +1,5 @@
 import * as db from './shared/db';
+import generatePingerCharts from './shared/generate-pinger-charts';
 import sns from './shared/sns';
 
 export async function run(event, context = {}) {
@@ -34,6 +35,9 @@ export async function run(event, context = {}) {
     return;
   }
 
+  // Generate summary images for each pinger
+  const urls = await generatePingerCharts(pingerIds);
+
   // Mark property queue entries as "locked" so we don't
   // send duplicate emails in case of an error
   await db.lockPropertyQueueItems(propertyQueueIds);
@@ -42,7 +46,7 @@ export async function run(event, context = {}) {
   await Promise.all(
     pingersWithProperties.map((pinger) =>
       Promise.all([
-        sendEmail(pinger, properties[pinger.id]),
+        sendEmail(pinger, properties[pinger.id], urls[pinger.id]),
         db.createPingerStatsEntry(
           pinger.id,
           properties[pinger.id].map(
@@ -57,7 +61,7 @@ export async function run(event, context = {}) {
   await db.deletePropertyQueueItems(propertyQueueIds);
 }
 
-function sendEmail(pinger, properties) {
+function sendEmail(pinger, properties, heroImgUrl) {
   return sns
     .publish({
       Message: 'email',
@@ -82,6 +86,7 @@ function sendEmail(pinger, properties) {
           DataType: 'String',
           StringValue: JSON.stringify({
             is_premium: pinger.is_premium,
+            hero_img_url: heroImgUrl,
             properties: properties.map((data) => [
               data.url,
               data.price,

@@ -22,3 +22,13 @@ export function createPropertyQueueItemFixture(customData = {}) {
     ...customData,
   };
 }
+
+export function createPropertyStatFixture(customData = {}) {
+  return {
+    id: 1,
+    pinger_id: 1,
+    data: [120, 200],
+    created_at: '2021-01-01T10:20:22Z',
+    ...customData,
+  };
+}
