@@ -15,8 +15,6 @@ const connection = serverlessMysql({
 const MAX_MONTHLY_EMAILS = 100;
 const startOfMonth = moment.utc().startOf('month').toDate();
 
-export const query = connection.query;
-
 export function getPingersByType(type) {
   return connection.query({
     sql: `
@@ -129,4 +127,54 @@ export function createPingerStatsEntry(pingerId, data) {
       data: JSON.stringify(data),
     },
   );
+}
+
+export function logPingerAttempt(values) {
+  return connection.query({
+    sql: 'INSERT INTO pinger_log SET ?',
+    values,
+  });
+}
+
+export function updatePingerAttemptTimestamp(id) {
+  return connection.query({
+    sql: `UPDATE pinger_log SET sent_at = NOW() WHERE id = ?`,
+    values: [id],
+  });
+}
+
+export function getAvailablePingers() {
+  return connection.query({
+    sql: `
+      SELECT *
+      FROM pinger_emails
+      WHERE unsubscribed_at IS NULL
+        AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
+    `,
+    values: [moment.utc().startOf('month').toDate()],
+    typeCast(field, next) {
+      if (field.type === 'TINY' && field.length === 1) {
+        return field.string() === '1';
+      }
+
+      if (field.name === 'categories' || field.name === 'types') {
+        return JSON.parse(field.string());
+      }
+
+      return next();
+    },
+  });
+}
+
+export function queuePingerForSummaryEmail(pingerId, data) {
+  return connection.query({
+    sql: `
+      INSERT INTO pinger_queue
+      SET ?
+   `,
+    values: {
+      pinger_id: pingerId,
+      data: JSON.stringify(data),
+    },
+  });
 }

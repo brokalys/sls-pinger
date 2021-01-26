@@ -28,17 +28,14 @@ exports.run = async (event, context, callback) => {
     replyTo: 'Matiss <matiss@brokalys.com>',
   };
 
-  const { insertId } = await db.query({
-    sql: 'INSERT INTO pinger_log SET ?',
-    values: {
-      to: data.to,
-      from: data.from,
-      subject: data.subject,
-      content: data.html,
-      pinger_id: pingerId,
-      email_type: templateId,
-      property_id: templateVariables.propertyId || null,
-    },
+  const { insertId } = await db.logPingerAttempt({
+    to: data.to,
+    from: data.from,
+    subject: data.subject,
+    content: data.html,
+    pinger_id: pingerId,
+    email_type: templateId,
+    property_id: templateVariables.propertyId || null,
   });
 
   await ses
@@ -60,10 +57,5 @@ exports.run = async (event, context, callback) => {
     })
     .promise();
 
-  await db.query({
-    sql: `UPDATE pinger_log SET sent_at = NOW() WHERE id = ?`,
-    values: [insertId],
-  });
-
-  callback(null, 'Success');
+  await db.updatePingerAttemptTimestamp(insertId);
 };

@@ -19,7 +19,7 @@ describe('process-sqs', () => {
     const event = {
       Records: createMockRecords([createPropertyFixture()]),
     };
-    db.query.mockReturnValue([
+    db.getAvailablePingers.mockReturnValue([
       createPingerFixture(),
       createPingerFixture({
         rooms_min: 4,
@@ -29,7 +29,7 @@ describe('process-sqs', () => {
     await run(event);
 
     expect(sns.publish).toBeCalledTimes(1);
-    expect(db.query).toBeCalledTimes(1);
+    expect(db.getAvailablePingers).toBeCalledTimes(1);
   });
 
   test.each(['daily', 'weekly', 'monthly'])(
@@ -38,7 +38,7 @@ describe('process-sqs', () => {
       const event = {
         Records: createMockRecords([createPropertyFixture()]),
       };
-      db.query.mockReturnValue([
+      db.getAvailablePingers.mockReturnValue([
         createPingerFixture({ type }),
         createPingerFixture({
           rooms_min: 4,
@@ -49,11 +49,7 @@ describe('process-sqs', () => {
       await run(event);
 
       expect(sns.publish).not.toBeCalled();
-      expect(db.query).toBeCalledWith(
-        expect.objectContaining({
-          sql: expect.stringContaining('INSERT INTO pinger_queue'),
-        }),
-      );
+      expect(db.queuePingerForSummaryEmail).toBeCalled();
     },
   );
 
@@ -65,6 +61,6 @@ describe('process-sqs', () => {
     await run(event);
 
     expect(sns.publish).not.toBeCalled();
-    expect(db.query).toBeCalledTimes(1);
+    expect(db.getAvailablePingers).toBeCalledTimes(1);
   });
 });

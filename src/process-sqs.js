@@ -1,4 +1,3 @@
-import moment from 'moment';
 import numeral from 'numeral';
 import inside from 'point-in-polygon';
 import * as db from './shared/db';
@@ -51,26 +50,7 @@ export async function run(event, context) {
     return;
   }
 
-  const results = await db.query({
-    sql: `
-    SELECT *
-    FROM pinger_emails
-    WHERE unsubscribed_at IS NULL
-      AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
-   `,
-    values: [moment.utc().startOf('month').toDate()],
-    typeCast(field, next) {
-      if (field.type === 'TINY' && field.length === 1) {
-        return field.string() === '1';
-      }
-
-      if (field.name === 'categories' || field.name === 'types') {
-        return JSON.parse(field.string());
-      }
-
-      return next();
-    },
-  });
+  const results = await db.getAvailablePingers();
 
   const invocations = properties.map((property) => {
     const pingers = results
@@ -187,14 +167,5 @@ function publishSns(data) {
 }
 
 function queuePinger(data) {
-  return db.query({
-    sql: `
-      INSERT INTO pinger_queue
-      SET ?
-   `,
-    values: {
-      pinger_id: data.pinger_id,
-      data: JSON.stringify(data.template_variables),
-    },
-  });
+  return db.queuePingerForSummaryEmail(data.pinger_id, data.template_variables);
 }
