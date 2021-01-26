@@ -126,7 +126,7 @@ export function createPingerStatsEntry(pingerId, data) {
     `,
     {
       pinger_id: pingerId,
-      data,
+      data: JSON.stringify(data),
     },
   );
 }
