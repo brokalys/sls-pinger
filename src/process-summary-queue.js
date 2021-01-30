@@ -1,6 +1,7 @@
 import * as db from './shared/db';
 import generatePingerCharts from './shared/generate-pinger-charts';
 import sns from './shared/sns';
+import createUnsubscribeLink from './shared/unsubscribe-link';
 
 export async function run(event, context = {}) {
   const { type = 'daily' } = event;
@@ -87,6 +88,7 @@ function sendEmail(pinger, properties, heroImgUrl) {
           StringValue: JSON.stringify({
             is_premium: pinger.is_premium,
             hero_img_url: heroImgUrl,
+            unsubscribe_url: createUnsubscribeLink(pinger),
             properties: properties.map((data) => [
               data.url,
               data.price,

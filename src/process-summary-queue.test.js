@@ -121,4 +121,26 @@ describe('process-summary-queue', () => {
     expect(sns.publish.mock.calls[0][0]).toEqual(deepHeroImgMatcher);
     expect(sns.publish.mock.calls[1][0]).not.toEqual(deepHeroImgMatcher);
   });
+
+  test.each(['is_premium', 'unsubscribe_url', 'properties'])(
+    'adds the required template_variables field: %j',
+    async (field) => {
+      db.getPingersByType.mockReturnValue([createPingerFixture()]);
+      db.getPropertyQueueForPingers.mockReturnValue([
+        createPropertyQueueItemFixture(),
+      ]);
+
+      await run({ type: 'weekly' });
+
+      expect(sns.publish.mock.calls[0][0]).toEqual(
+        expect.objectContaining({
+          MessageAttributes: expect.objectContaining({
+            template_variables: expect.objectContaining({
+              StringValue: expect.stringContaining(JSON.stringify(field)),
+            }),
+          }),
+        }),
+      );
+    },
+  );
 });

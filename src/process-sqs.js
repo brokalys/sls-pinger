@@ -2,6 +2,7 @@ import numeral from 'numeral';
 import inside from 'point-in-polygon';
 import * as db from './shared/db';
 import sns from './shared/sns';
+import createUnsubscribeLink from './shared/unsubscribe-link';
 
 function parseLocation(location) {
   return location
@@ -17,12 +18,6 @@ function nl2br(str, is_xhtml) {
     /([^>\r\n]?)(\r\n|\n\r|\r|\n)/g,
     '$1' + breakTag + '$2',
   );
-}
-
-function getUnsubscribeLink(pinger) {
-  return `https://unsubscribe.brokalys.com/?key=${encodeURIComponent(
-    pinger.unsubscribe_key,
-  )}&id=${encodeURIComponent(pinger.id)}`;
 }
 
 function parseImages(img) {
@@ -107,7 +102,7 @@ export async function run(event, context) {
           (result.content || '').replace(/(<([^>]+)>)/gi, ''),
         );
 
-        result.unsubscribe_url = getUnsubscribeLink(pinger);
+        result.unsubscribe_url = createUnsubscribeLink(pinger);
         result.url = `https://view.brokalys.com/?link=${encodeURIComponent(
           result.url,
         )}`;
