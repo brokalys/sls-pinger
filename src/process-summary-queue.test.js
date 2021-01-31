@@ -122,6 +122,19 @@ describe('process-summary-queue', () => {
     expect(sns.publish.mock.calls[1][0]).not.toEqual(deepHeroImgMatcher);
   });
 
+  test('inserts new summary entries before attempting to generate the summary chart', async () => {
+    db.getPingersByType.mockResolvedValue([createPingerFixture({ id: 1 })]);
+    db.getPropertyQueueForPingers.mockResolvedValue([
+      createPropertyQueueItemFixture({ pinger_id: 1 }),
+    ]);
+
+    await run({ type: 'weekly' });
+
+    expect(generatePingerCharts.mock.invocationCallOrder[0]).toBeGreaterThan(
+      db.createPingerStatsEntry.mock.invocationCallOrder[0],
+    );
+  });
+
   test.each(['is_premium', 'unsubscribe_url', 'properties'])(
     'adds the required template_variables field: %j',
     async (field) => {

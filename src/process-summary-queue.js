@@ -36,25 +36,29 @@ export async function run(event, context = {}) {
     return;
   }
 
-  // Generate summary images for each pinger
-  const urls = await generatePingerCharts(pingerIds);
-
   // Mark property queue entries as "locked" so we don't
   // send duplicate emails in case of an error
   await db.lockPropertyQueueItems(propertyQueueIds);
 
+  // Insert a stats entry for each pinger
+  await Promise.all(
+    pingersWithProperties.map((pinger) =>
+      db.createPingerStatsEntry(
+        pinger.id,
+        properties[pinger.id].map(
+          ({ calc_price_per_sqm }) => calc_price_per_sqm,
+        ),
+      ),
+    ),
+  );
+
+  // Generate summary images for each pinger
+  const urls = await generatePingerCharts(pingerIds);
+
   // Publish SNS notification to send email for each PINGER that has properties
   await Promise.all(
     pingersWithProperties.map((pinger) =>
-      Promise.all([
-        sendEmail(pinger, properties[pinger.id], urls[pinger.id]),
-        db.createPingerStatsEntry(
-          pinger.id,
-          properties[pinger.id].map(
-            ({ calc_price_per_sqm }) => calc_price_per_sqm,
-          ),
-        ),
-      ]),
+      sendEmail(pinger, properties[pinger.id], urls[pinger.id]),
     ),
   );
 
