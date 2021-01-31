@@ -5,6 +5,7 @@
   "author": "Matiss Janis Aboltins <matiss@mja.lv>",
   "license": "MIT",
   "scripts": {
+    "build": "serverless package",
     "test": "jest",
     "lint": "eslint .",
     "deploy": "serverless deploy",
@@ -42,7 +43,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn lint && yarn test && yarn build"
     }
   },
   "lint-staged": {
