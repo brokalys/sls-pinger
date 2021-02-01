@@ -11,6 +11,10 @@ export async function run(event, context = {}) {
   const pingers = await db.getPingersByType(type);
   const pingerIds = pingers.map(({ id }) => id);
 
+  if (pingerIds.length <= 0) {
+    return;
+  }
+
   // Retrieve the queue for all the matched pingers
   const propertyQueue = await db.getPropertyQueueForPingers(pingerIds);
   const propertyQueueIds = propertyQueue.map(({ id }) => id);

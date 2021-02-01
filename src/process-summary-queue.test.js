@@ -156,4 +156,12 @@ describe('process-summary-queue', () => {
       );
     },
   );
+
+  test('does nothing if no pingers with the given type', async () => {
+    db.getPingersByType.mockReturnValue([]);
+
+    await run({ type: 'monthly' });
+
+    expect(db.getPropertyQueueForPingers).not.toBeCalled();
+  });
 });
