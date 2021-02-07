@@ -15,16 +15,16 @@ const connection = serverlessMysql({
 const MAX_MONTHLY_EMAILS = 100;
 const startOfMonth = moment.utc().startOf('month').toDate();
 
-export function getPingersByType(type) {
+export function getPingersByFrequency(frequency) {
   return connection.query({
     sql: `
       SELECT *
       FROM pinger_emails
       WHERE unsubscribed_at IS NULL
         AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
-        AND type = ?
+        AND frequency = ?
    `,
-    values: [startOfMonth, type],
+    values: [startOfMonth, frequency],
     typeCast(field, next) {
       if (field.type === 'TINY' && field.length === 1) {
         return field.string() === '1';

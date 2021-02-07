@@ -120,7 +120,7 @@ export async function run(event, context) {
           pinger_id: pinger.id,
           template_id: 'email',
           template_variables: result,
-          type: pinger.type,
+          frequency: pinger.frequency,
         };
       })
       .map(performAction),
@@ -128,7 +128,7 @@ export async function run(event, context) {
 }
 
 function performAction(data) {
-  if (data.type === 'immediate') {
+  if (data.frequency === 'immediate') {
     return publishSns(data);
   }
 

@@ -4,11 +4,11 @@ import sns from './shared/sns';
 import createUnsubscribeLink from './shared/unsubscribe-link';
 
 export async function run(event, context = {}) {
-  const { type = 'daily' } = event;
+  const { frequency = 'daily' } = event;
   context.callbackWaitsForEmptyEventLoop = false;
 
-  // Retrieve all the PINGERS with type {variable} from the DB
-  const pingers = await db.getPingersByType(type);
+  // Retrieve all the PINGERS with frequency {variable} from the DB
+  const pingers = await db.getPingersByFrequency(frequency);
   const pingerIds = pingers.map(({ id }) => id);
 
   if (pingerIds.length <= 0) {

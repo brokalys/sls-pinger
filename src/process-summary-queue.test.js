@@ -17,55 +17,55 @@ describe('process-summary-queue', () => {
   afterEach(jest.clearAllMocks);
 
   test('sends an email SNS notification', async () => {
-    db.getPingersByType.mockReturnValue([createPingerFixture()]);
+    db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([
       createPropertyQueueItemFixture({ id: 1 }),
       createPropertyQueueItemFixture({ id: 2 }),
       createPropertyQueueItemFixture({ id: 3 }),
     ]);
 
-    await run({ type: 'daily' });
+    await run({ frequency: 'daily' });
 
     expect(sns.publish).toBeCalledTimes(1);
     expect(sns.publish.mock.calls[0]).toMatchSnapshot();
   });
 
   test('inserts an entry into the stats table', async () => {
-    db.getPingersByType.mockReturnValue([createPingerFixture()]);
+    db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([
       createPropertyQueueItemFixture(),
     ]);
 
-    await run({ type: 'daily' });
+    await run({ frequency: 'daily' });
 
     expect(db.createPingerStatsEntry).toBeCalledTimes(1);
     expect(db.createPingerStatsEntry.mock.calls[0]).toMatchSnapshot();
   });
 
   test('does not send a SNS notification if there are no PINGER', async () => {
-    db.getPingersByType.mockReturnValue([]);
+    db.getPingersByFrequency.mockReturnValue([]);
     db.getPropertyQueueForPingers.mockReturnValue([
       createPropertyQueueItemFixture({ id: 1 }),
       createPropertyQueueItemFixture({ id: 2 }),
       createPropertyQueueItemFixture({ id: 3 }),
     ]);
 
-    await run({ type: 'daily' });
+    await run({ frequency: 'daily' });
 
     expect(sns.publish).toBeCalledTimes(0);
   });
 
   test('does not send a SNS notification if there are no properties', async () => {
-    db.getPingersByType.mockReturnValue([createPingerFixture()]);
+    db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([]);
 
-    await run({ type: 'daily' });
+    await run({ frequency: 'daily' });
 
     expect(sns.publish).toBeCalledTimes(0);
   });
 
   test('sends multiple email SNS notifications', async () => {
-    db.getPingersByType.mockReturnValue([
+    db.getPingersByFrequency.mockReturnValue([
       createPingerFixture({ id: 1 }),
       createPingerFixture({ id: 2 }),
     ]);
@@ -75,27 +75,27 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ id: 3, pinger_id: 2 }),
     ]);
 
-    await run({ type: 'weekly' });
+    await run({ frequency: 'weekly' });
 
     expect(sns.publish).toBeCalledTimes(2);
   });
 
   test('locks and deletes used properties', async () => {
-    db.getPingersByType.mockReturnValue([createPingerFixture()]);
+    db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([
       createPropertyQueueItemFixture({ id: 1 }),
       createPropertyQueueItemFixture({ id: 2 }),
       createPropertyQueueItemFixture({ id: 3 }),
     ]);
 
-    await run({ type: 'monthly' });
+    await run({ frequency: 'monthly' });
 
     expect(db.lockPropertyQueueItems).toBeCalledWith([1, 2, 3]);
     expect(db.deletePropertyQueueItems).toBeCalledWith([1, 2, 3]);
   });
 
   test('adds charts to the emails for pingers that have charts', async () => {
-    db.getPingersByType.mockReturnValue([
+    db.getPingersByFrequency.mockReturnValue([
       createPingerFixture({ id: 1 }),
       createPingerFixture({ id: 2 }),
     ]);
@@ -107,7 +107,7 @@ describe('process-summary-queue', () => {
       1: 'https://url.for/chart.svg',
     });
 
-    await run({ type: 'weekly' });
+    await run({ frequency: 'weekly' });
 
     const deepHeroImgMatcher = expect.objectContaining({
       MessageAttributes: expect.objectContaining({
@@ -123,12 +123,14 @@ describe('process-summary-queue', () => {
   });
 
   test('inserts new summary entries before attempting to generate the summary chart', async () => {
-    db.getPingersByType.mockResolvedValue([createPingerFixture({ id: 1 })]);
+    db.getPingersByFrequency.mockResolvedValue([
+      createPingerFixture({ id: 1 }),
+    ]);
     db.getPropertyQueueForPingers.mockResolvedValue([
       createPropertyQueueItemFixture({ pinger_id: 1 }),
     ]);
 
-    await run({ type: 'weekly' });
+    await run({ frequency: 'weekly' });
 
     expect(generatePingerCharts.mock.invocationCallOrder[0]).toBeGreaterThan(
       db.createPingerStatsEntry.mock.invocationCallOrder[0],
@@ -138,12 +140,12 @@ describe('process-summary-queue', () => {
   test.each(['is_premium', 'unsubscribe_url', 'properties'])(
     'adds the required template_variables field: %j',
     async (field) => {
-      db.getPingersByType.mockReturnValue([createPingerFixture()]);
+      db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
       db.getPropertyQueueForPingers.mockReturnValue([
         createPropertyQueueItemFixture(),
       ]);
 
-      await run({ type: 'weekly' });
+      await run({ frequency: 'weekly' });
 
       expect(sns.publish.mock.calls[0][0]).toEqual(
         expect.objectContaining({
@@ -157,10 +159,10 @@ describe('process-summary-queue', () => {
     },
   );
 
-  test('does nothing if no pingers with the given type', async () => {
-    db.getPingersByType.mockReturnValue([]);
+  test('does nothing if no pingers with the given frequency', async () => {
+    db.getPingersByFrequency.mockReturnValue([]);
 
-    await run({ type: 'monthly' });
+    await run({ frequency: 'monthly' });
 
     expect(db.getPropertyQueueForPingers).not.toBeCalled();
   });

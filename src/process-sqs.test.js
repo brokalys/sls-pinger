@@ -82,15 +82,15 @@ describe('process-sqs', () => {
 
   test.each(['daily', 'weekly', 'monthly'])(
     'writes a new queue entry if pinger invocation is %j',
-    async (type) => {
+    async (frequency) => {
       const event = {
         Records: createMockRecords([createPropertyFixture()]),
       };
       db.getAvailablePingers.mockReturnValue([
-        createPingerFixture({ type }),
+        createPingerFixture({ frequency }),
         createPingerFixture({
           rooms_min: 4,
-          type,
+          frequency,
         }),
       ]);
 
