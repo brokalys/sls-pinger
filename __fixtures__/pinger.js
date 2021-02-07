@@ -5,6 +5,7 @@ export function createPingerFixture(customData = {}) {
     types: ['sell'],
     price_min: 100000,
     price_max: 200000,
+    price_type: 'total',
     rooms_min: null,
     rooms_max: null,
     area_m2_min: null,

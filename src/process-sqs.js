@@ -53,11 +53,17 @@ export async function run(event, context) {
       .filter((pinger) => pinger.types.includes(property.type))
       .filter(
         (pinger) =>
-          pinger.price_min === null || property.price >= pinger.price_min,
+          pinger.price_min === null ||
+          (pinger.price_type === 'sqm'
+            ? property.calc_price_per_sqm >= pinger.price_min
+            : property.price >= pinger.price_min),
       )
       .filter(
         (pinger) =>
-          pinger.price_max === null || property.price <= pinger.price_max,
+          pinger.price_max === null ||
+          (pinger.price_type === 'sqm'
+            ? property.calc_price_per_sqm <= pinger.price_max
+            : property.price <= pinger.price_max),
       )
       .filter(
         (pinger) =>

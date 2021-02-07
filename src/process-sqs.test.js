@@ -15,21 +15,69 @@ function createMockRecords(records) {
 describe('process-sqs', () => {
   afterEach(jest.clearAllMocks);
 
-  test('publishes a new SNS message if PINGER falls within defined bounds', async () => {
-    const event = {
-      Records: createMockRecords([createPropertyFixture()]),
-    };
-    db.getAvailablePingers.mockReturnValue([
-      createPingerFixture(),
-      createPingerFixture({
-        rooms_min: 4,
-      }),
-    ]);
+  describe('publishes a new SNS message', () => {
+    test('if PINGER falls within defined bounds', async () => {
+      const event = {
+        Records: createMockRecords([createPropertyFixture()]),
+      };
+      db.getAvailablePingers.mockReturnValue([
+        createPingerFixture(),
+        createPingerFixture({
+          rooms_min: 4,
+        }),
+      ]);
 
-    await run(event);
+      await run(event);
 
-    expect(sns.publish).toBeCalledTimes(1);
-    expect(db.getAvailablePingers).toBeCalledTimes(1);
+      expect(sns.publish).toBeCalledTimes(1);
+      expect(db.getAvailablePingers).toBeCalledTimes(1);
+    });
+
+    test('if PINGER falls within defined total price range', async () => {
+      const event = {
+        Records: createMockRecords([
+          createPropertyFixture({
+            price: 10000,
+            calc_price_per_sqm: 50,
+          }),
+        ]),
+      };
+      db.getAvailablePingers.mockReturnValue([
+        createPingerFixture({
+          price_min: 10000,
+          price_max: 50000,
+          price_type: 'total',
+        }),
+      ]);
+
+      await run(event);
+
+      expect(sns.publish).toBeCalledTimes(1);
+      expect(db.getAvailablePingers).toBeCalledTimes(1);
+    });
+
+    test('if PINGER falls within defined sqm price range', async () => {
+      const event = {
+        Records: createMockRecords([
+          createPropertyFixture({
+            price: 10000,
+            calc_price_per_sqm: 50,
+          }),
+        ]),
+      };
+      db.getAvailablePingers.mockReturnValue([
+        createPingerFixture({
+          price_min: 10,
+          price_max: 100,
+          price_type: 'sqm',
+        }),
+      ]);
+
+      await run(event);
+
+      expect(sns.publish).toBeCalledTimes(1);
+      expect(db.getAvailablePingers).toBeCalledTimes(1);
+    });
   });
 
   test.each(['daily', 'weekly', 'monthly'])(
