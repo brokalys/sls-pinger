@@ -2,7 +2,7 @@
   "name": "sls-pinger",
   "version": "1.0.0",
   "repository": "git@github.com:brokalys/sls-pinger.git",
-  "author": "Matiss Janis Aboltins <matiss@mja.lv>",
+  "author": "Matiss Janis Aboltins <matiss@brokalys.com>",
   "license": "MIT",
   "scripts": {
     "build": "serverless package",
