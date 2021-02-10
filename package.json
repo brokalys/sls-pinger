@@ -35,8 +35,8 @@
     "jest-canvas-mock": "^2.3.0",
     "lint-staged": ">=10",
     "prettier": "^2.0.1",
-    "serverless": "^1.65.0",
-    "serverless-plugin-aws-alerts": "^1.4.0",
+    "serverless": "^2.23.0",
+    "serverless-plugin-aws-alerts": "^1.7.1",
     "serverless-webpack": "^5.3.1",
     "webpack": "^5.10.0",
     "webpack-node-externals": "^2.5.2"

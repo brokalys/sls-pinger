@@ -1,10 +1,10 @@
 service: brokalys-pinger
+useDotenv: true
 
 provider:
   name: aws
   region: eu-west-1
   runtime: nodejs12.x
-  cfLogs: true
   logRetentionInDays: 7
   versionFunctions: false
   stage: ${opt:stage, 'dev'}
@@ -26,6 +26,12 @@ provider:
       Resource: 'arn:aws:s3:::${self:provider.stage}-pinger-charts/*'
   environment:
     STAGE: ${opt:stage, 'dev'}
+    DB_HOST: ${env:DB_HOST}
+    DB_DATABASE: ${env:DB_DATABASE}
+    DB_USERNAME: ${env:DB_USERNAME}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+    MAILGUN_API_KEY: ${env:MAILGUN_API_KEY}
+    MAILGUN_DOMAIN: ${env:MAILGUN_DOMAIN}
 
 functions:
   email:
@@ -65,7 +71,9 @@ functions:
     timeout: 3
     handler: src/limit-locker.run
     events:
-      - schedule: rate(10 minutes)
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
     alarms:
       - name: limitLockerErrors
         description: 'Pinger: limit locker errors'
@@ -98,14 +106,17 @@ functions:
     events:
       - schedule:
           rate: cron(0 9 * * ? *)
+          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
           input:
             frequency: daily
       - schedule:
           rate: cron(0 9 ? * 2 *)
+          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
           input:
             frequency: weekly
       - schedule:
           rate: cron(0 9 1 * ? *)
+          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
           input:
             frequency: monthly
     alarms:
@@ -122,6 +133,9 @@ functions:
         treatMissingData: notBreaching
 
 custom:
+  scheduleEnabled:
+    dev: false
+    prod: true
   alerts:
     stages:
       - prod
@@ -158,7 +172,6 @@ resources:
         FifoQueue: true
     ChartBucket:
       Type: AWS::S3::Bucket
-      Description: Generated charts for PINGER summary emails.
       Properties:
         BucketName: ${self:provider.stage}-pinger-charts
         AccessControl: AuthenticatedRead
