@@ -1,4 +1,3 @@
-import moment from 'moment';
 import * as db from './shared/db';
 import sns from './shared/sns';
 
@@ -25,8 +24,7 @@ exports.run = async (event, context = {}) => {
     (email) => !limitNotificationEmails.includes(email),
   );
 
-  // TODO: remove the date hack after February
-  if (!emails.length || moment().isBefore('2021-02-01', 'month')) {
+  if (!emails.length) {
     return;
   }
 

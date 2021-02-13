@@ -1,4 +1,3 @@
-import moment from 'moment';
 import * as db from './shared/db';
 import sns from './shared/sns';
 import { run } from './limit-locker';
@@ -7,7 +6,6 @@ import {
   createPropertyQueueItemFixture,
 } from '__fixtures__';
 
-jest.mock('moment');
 jest.mock('./shared/db');
 jest.mock('./shared/sns');
 
@@ -15,14 +13,6 @@ const TEST_EMAIL_1 = 'test+1@brokalys.com';
 const TEST_EMAIL_2 = 'test+2@brokalys.com';
 
 describe('limit-locker', () => {
-  let isBefore;
-
-  // TODO: remove the date hack after February
-  beforeEach(() => {
-    isBefore = jest.fn().mockReturnValue(false);
-    moment.mockReturnValue({ isBefore });
-  });
-
   afterEach(jest.clearAllMocks);
 
   test('sends an email SNS notification', async () => {
@@ -66,17 +56,5 @@ describe('limit-locker', () => {
     await run();
 
     expect(db.limitLockPingerEmails).toBeCalledWith([TEST_EMAIL_1]);
-  });
-
-  // TODO: remove the date hack after February
-  test('does not send a email SNS notification if it is not yet February, but still locks', async () => {
-    isBefore.mockReturnValue(true);
-    db.getEmailsThatShouldBeLimitLocked.mockReturnValue([TEST_EMAIL_1]);
-    db.getEmailsWithLimitLockerNotification.mockReturnValue([]);
-
-    await run();
-
-    expect(db.limitLockPingerEmails).toBeCalledWith([TEST_EMAIL_1]);
-    expect(sns.publish).not.toBeCalled();
   });
 });
