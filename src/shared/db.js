@@ -81,6 +81,7 @@ export async function getEmailsThatShouldBeLimitLocked() {
         INNER JOIN pinger_emails em ON em.id = lo.pinger_id
         WHERE lo.created_at >= ?
           AND em.is_premium = false
+          AND em.unsubscribed_at IS NULL
         GROUP BY em.email
         HAVING COUNT(*) >= ?
       `,
@@ -111,6 +112,7 @@ export function limitLockPingerEmails(emails) {
       SET limit_reached_at = NOW()
       WHERE email IN (?)
         AND (limit_reached_at < ? OR limit_reached_at IS NULL)
+        AND unsubscribed_at IS NULL
     `,
     [emails, startOfMonth],
   );
