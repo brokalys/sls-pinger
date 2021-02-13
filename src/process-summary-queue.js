@@ -57,7 +57,7 @@ export async function run(event, context = {}) {
   );
 
   // Generate summary images for each pinger
-  const urls = await generatePingerCharts(pingerIds);
+  const urls = await generatePingerCharts(pingers);
 
   // Publish SNS notification to send email for each PINGER that has properties
   await Promise.all(

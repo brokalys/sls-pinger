@@ -2,7 +2,12 @@ import moment from 'moment';
 import * as db from './db';
 import generateChart from './generate-chart';
 
-export default async function generatePingerCharts(pingerIds) {
+export default async function generatePingerCharts(pingers) {
+  const pingerIds = pingers.map(({ id }) => id);
+  const pingerHashMap = pingers.reduce(
+    (carry, pinger) => ({ ...carry, [pinger.id]: pinger }),
+    {},
+  );
   const stats = await db.getPropertyStats(pingerIds);
 
   const state = {
@@ -17,7 +22,9 @@ export default async function generatePingerCharts(pingerIds) {
       state.entities[row.pinger_id] = {
         values: [],
         minDate: null,
+        maxDate: null,
         uniqueDates: [],
+        frequency: pingerHashMap[row.pinger_id].frequency,
       };
       state.ids.push(row.pinger_id);
     }
@@ -33,6 +40,13 @@ export default async function generatePingerCharts(pingerIds) {
       state.entities[row.pinger_id].minDate = row.created_at;
     }
 
+    if (
+      !state.entities[row.pinger_id].maxDate ||
+      state.entities[row.pinger_id].maxDate < row.created_at
+    ) {
+      state.entities[row.pinger_id].maxDate = row.created_at;
+    }
+
     row.data.forEach((price) => {
       state.entities[row.pinger_id].values.push({
         x: createdAt,
@@ -46,17 +60,39 @@ export default async function generatePingerCharts(pingerIds) {
   );
 
   const urls = await Promise.all(
-    idsWithCharts.map((id) =>
-      generateChart(
+    idsWithCharts.map((id) => {
+      const maxDate = moment(state.entities[id].maxDate);
+      const calculatedFutureDate = moment(state.entities[id].minDate).add(
+        11,
+        mapPingerFrequencyToMomentJs(state.entities[id].frequency),
+      );
+
+      return generateChart(
         `${id}/${moment().format('YYYY-MM-DD')}.svg`,
         state.entities[id].values,
-        moment(state.entities[id].minDate).add(11, 'days').valueOf(),
-      ),
-    ),
+        (maxDate.isAfter(calculatedFutureDate)
+          ? maxDate
+          : calculatedFutureDate
+        ).valueOf(),
+      );
+    }),
   );
 
   return urls.reduce(
     (carry, url, index) => ({ ...carry, [idsWithCharts[index]]: url }),
     {},
   );
+}
+
+function mapPingerFrequencyToMomentJs(frequency) {
+  switch (frequency) {
+    case 'daily':
+      return 'days';
+    case 'weekly':
+      return 'weeks';
+    case 'monthly':
+      return 'months';
+  }
+
+  return 'days';
 }
