@@ -73,7 +73,6 @@ functions:
     events:
       - schedule:
           rate: rate(10 minutes)
-          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
     alarms:
       - name: limitLockerErrors
         description: 'Pinger: limit locker errors'
@@ -106,17 +105,14 @@ functions:
     events:
       - schedule:
           rate: cron(0 9 * * ? *)
-          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
           input:
             frequency: daily
       - schedule:
           rate: cron(0 9 ? * 2 *)
-          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
           input:
             frequency: weekly
       - schedule:
           rate: cron(0 9 1 * ? *)
-          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
           input:
             frequency: monthly
     alarms:
@@ -133,9 +129,6 @@ functions:
         treatMissingData: notBreaching
 
 custom:
-  scheduleEnabled:
-    dev: false
-    prod: true
   alerts:
     stages:
       - prod
