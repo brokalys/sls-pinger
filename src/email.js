@@ -22,7 +22,7 @@ exports.run = async (event, context, callback) => {
 
   const data = {
     from: 'Brokalys <noreply@brokalys.com>',
-    subject,
+    subject: `${process.env.STAGE === 'dev' ? 'DEMO: ' : ''}${subject}`,
     to,
     html,
     replyTo: 'Matiss <matiss@brokalys.com>',
