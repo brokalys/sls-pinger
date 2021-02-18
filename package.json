@@ -37,6 +37,7 @@
     "lint-staged": ">=10",
     "prettier": "^2.0.1",
     "serverless": "^2.23.0",
+    "serverless-layers": "^2.3.3",
     "serverless-plugin-aws-alerts": "^1.7.1",
     "serverless-webpack": "^5.3.1",
     "webpack": "^5.10.0",

@@ -4,7 +4,7 @@ useDotenv: true
 provider:
   name: aws
   region: eu-west-1
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   logRetentionInDays: 7
   versionFunctions: false
   stage: ${opt:stage, 'dev'}
@@ -65,6 +65,7 @@ functions:
         datapointsToAlarm: 1
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: breaching
+
   limit-locker:
     name: BrokalysPinger-LimitLocker-${self:provider.stage}
     description: Lock pingers that have reached the monthly lockout threshold.
@@ -85,6 +86,7 @@ functions:
         datapointsToAlarm: 1
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
+
   process-sqs:
     name: BrokalysPinger-ProcessSqs-${self:provider.stage}
     description: Process SQS to trigger pinger email sending.
@@ -97,6 +99,7 @@ functions:
               - PingerQueue
               - Arn
           batchSize: 10
+
   process-summary-queue:
     name: BrokalysPinger-ProcessSummaryQueue-${self:provider.stage}
     description: Process pinger summary queue
@@ -115,6 +118,8 @@ functions:
           rate: cron(0 9 1 * ? *)
           input:
             frequency: monthly
+    dependsOn:
+      - ChartBucket
     alarms:
       - name: processQueueErrors
         description: 'Pinger: summary queue processing errors'
@@ -147,14 +152,19 @@ custom:
 
   webpack:
     webpackConfig: 'webpack.config.js'
-    includeModules:
-      forceExclude:
-        - aws-sdk
+    includeModules: false
     packager: 'yarn'
+
+  serverless-layers:
+    packageManager: yarn
+    dependenciesPath: ./package.json
+    layersDeploymentBucket: ${self:provider.stage}-brokalys-lambda-layers
+    customInstallationCommand: yarn install --production --ignore-scripts
 
 plugins:
   - serverless-plugin-aws-alerts
   - serverless-webpack
+  - serverless-layers
 
 resources:
   Resources:
