@@ -46,14 +46,17 @@ export async function run(event, context = {}) {
 
   // Insert a stats entry for each pinger
   await Promise.all(
-    pingersWithProperties.map((pinger) =>
-      db.createPingerStatsEntry(
-        pinger.id,
-        properties[pinger.id].map(
-          ({ calc_price_per_sqm }) => calc_price_per_sqm,
-        ),
-      ),
-    ),
+    pingersWithProperties.map((pinger) => {
+      const stats = properties[pinger.id]
+        .filter(({ calc_price_per_sqm }) => calc_price_per_sqm > 0)
+        .map(({ calc_price_per_sqm }) => calc_price_per_sqm.toFixed(2));
+
+      if (stats.length === 0) {
+        return;
+      }
+
+      return db.createPingerStatsEntry(pinger.id, stats);
+    }),
   );
 
   // Generate summary images for each pinger

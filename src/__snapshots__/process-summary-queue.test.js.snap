@@ -4,7 +4,7 @@ exports[`process-summary-queue inserts an entry into the stats table 1`] = `
 Array [
   1,
   Array [
-    122.32,
+    "122.32",
   ],
 ]
 `;

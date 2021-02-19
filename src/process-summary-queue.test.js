@@ -33,13 +33,28 @@ describe('process-summary-queue', () => {
   test('inserts an entry into the stats table', async () => {
     db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([
-      createPropertyQueueItemFixture(),
+      createPropertyQueueItemFixture({ id: 1 }),
+      createPropertyQueueItemFixture({
+        id: 2,
+        data: { calc_price_per_sqm: null },
+      }),
     ]);
 
     await run({ frequency: 'daily' });
 
     expect(db.createPingerStatsEntry).toBeCalledTimes(1);
     expect(db.createPingerStatsEntry.mock.calls[0]).toMatchSnapshot();
+  });
+
+  test('does not insert NULL values into the stats table', async () => {
+    db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
+    db.getPropertyQueueForPingers.mockReturnValue([
+      createPropertyQueueItemFixture({ data: { calc_price_per_sqm: null } }),
+    ]);
+
+    await run({ frequency: 'daily' });
+
+    expect(db.createPingerStatsEntry).not.toBeCalled();
   });
 
   test('does not send a SNS notification if there are no PINGER', async () => {
