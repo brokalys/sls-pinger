@@ -30,6 +30,50 @@ describe('process-summary-queue', () => {
     expect(sns.publish.mock.calls[0]).toMatchSnapshot();
   });
 
+  test('limits sending 100 property emails for non-premium users', async () => {
+    db.getPingersByFrequency.mockReturnValue([
+      createPingerFixture({ is_premium: false }),
+    ]);
+    db.getPropertyQueueForPingers.mockReturnValue(
+      new Array(800)
+        .fill('')
+        .map((row, index) => createPropertyQueueItemFixture({ id: index })),
+    );
+
+    await run({ frequency: 'daily' });
+
+    expect(sns.publish).toBeCalledTimes(1);
+
+    const templateVariables = JSON.parse(
+      sns.publish.mock.calls[0][0].MessageAttributes.template_variables
+        .StringValue,
+    );
+    expect(templateVariables.limit_reached).toBeTruthy();
+    expect(templateVariables.properties).toHaveLength(100);
+  });
+
+  test('limits sending 500 property emails for premium users', async () => {
+    db.getPingersByFrequency.mockReturnValue([
+      createPingerFixture({ is_premium: true }),
+    ]);
+    db.getPropertyQueueForPingers.mockReturnValue(
+      new Array(800)
+        .fill('')
+        .map((row, index) => createPropertyQueueItemFixture({ id: index })),
+    );
+
+    await run({ frequency: 'daily' });
+
+    expect(sns.publish).toBeCalledTimes(1);
+
+    const templateVariables = JSON.parse(
+      sns.publish.mock.calls[0][0].MessageAttributes.template_variables
+        .StringValue,
+    );
+    expect(templateVariables.limit_reached).toBeTruthy();
+    expect(templateVariables.properties).toHaveLength(500);
+  });
+
   test('inserts an entry into the stats table', async () => {
     db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([

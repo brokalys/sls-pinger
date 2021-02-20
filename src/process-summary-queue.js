@@ -3,6 +3,9 @@ import generatePingerCharts from './shared/generate-pinger-charts';
 import sns from './shared/sns';
 import createUnsubscribeLink from './shared/unsubscribe-link';
 
+const FREE_LIMIT = 100;
+const PREMIUM_LIMIT = 500;
+
 export async function run(event, context = {}) {
   const { frequency = 'daily' } = event;
   context.callbackWaitsForEmptyEventLoop = false;
@@ -74,6 +77,8 @@ export async function run(event, context = {}) {
 }
 
 function sendEmail(pinger, properties, heroImgUrl) {
+  const propertyLimit = pinger.is_premium ? PREMIUM_LIMIT : FREE_LIMIT;
+
   return sns
     .publish({
       Message: 'email',
@@ -98,14 +103,12 @@ function sendEmail(pinger, properties, heroImgUrl) {
           DataType: 'String',
           StringValue: JSON.stringify({
             is_premium: pinger.is_premium,
+            limit_reached: properties.length > propertyLimit,
             hero_img_url: heroImgUrl,
             unsubscribe_url: createUnsubscribeLink(pinger),
-            properties: properties.map((data) => [
-              data.url,
-              data.price,
-              data.rooms,
-              data.area,
-            ]),
+            properties: properties
+              .splice(0, propertyLimit)
+              .map((data) => [data.url, data.price, data.rooms, data.area]),
           }),
         },
       },

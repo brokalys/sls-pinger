@@ -300,7 +300,21 @@
                           <a href="{{ this.[0] }}">Atvērt</a>
                         </td>
                       </tr>
-                      {{/each}}
+                      {{/each}} {{#if limit_reached}}
+                      <tr>
+                        <td colspan="4" style="text-align: center">...</td>
+                      </tr>
+                      <tr>
+                        <th colspan="4" style="text-align: center">
+                          {{#if is_premium}} Diemžēl, e-pasta izmēra dēļ,
+                          nevaram pievienot visus sludinājumus. Maksimālais, cik
+                          varam pievienot, ir 500 sludinājumi. {{else}}
+                          Bezmaksas sludinājumu limits (100 sludinājumi) vienā
+                          e-pastā ir sasniegts. Vēlies palielināt limitu?
+                          Sazinies ar matiss@brokalys.com {{/if}}
+                        </th>
+                      </tr>
+                      {{/if}}
                     </table>
                   </td>
                 </tr>
