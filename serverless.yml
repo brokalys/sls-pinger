@@ -10,20 +10,22 @@ provider:
   stage: ${opt:stage, 'dev'}
   tags:
     group: pinger
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - SNS:Publish
-      Resource: 'arn:aws:sns:eu-west-1:*:*'
-    - Effect: Allow
-      Action:
-        - SES:SendEmail
-      Resource: 'arn:aws:ses:eu-west-1:*:*'
-    - Effect: Allow
-      Action:
-        - S3:PutObject
-        - S3:GetObject
-      Resource: 'arn:aws:s3:::${self:provider.stage}-pinger-charts/*'
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - SNS:Publish
+          Resource: 'arn:aws:sns:eu-west-1:*:*'
+        - Effect: Allow
+          Action:
+            - SES:SendEmail
+          Resource: 'arn:aws:ses:eu-west-1:*:*'
+        - Effect: Allow
+          Action:
+            - S3:PutObject
+            - S3:GetObject
+          Resource: 'arn:aws:s3:::${self:provider.stage}-pinger-charts/*'
   environment:
     STAGE: ${opt:stage, 'dev'}
     DB_HOST: ${env:DB_HOST}
