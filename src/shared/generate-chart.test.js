@@ -19,8 +19,6 @@ describe('generate-chart', () => {
   });
 
   test('uploads the SVG chart to S3', async () => {
-    s3.getSignedUrlPromise.mockReturnValue('https://url-to-file/test.svg');
-
     const url = await generateChart(
       'test.svg',
       [{ x: '2021-01-01', y: 120 }],
@@ -28,7 +26,8 @@ describe('generate-chart', () => {
     );
 
     expect(s3.putObject).toBeCalled();
-    expect(s3.getSignedUrlPromise).toBeCalled();
-    expect(url).toMatch('https://url-to-file/test.svg');
+    expect(url).toMatch(
+      'https://dev-pinger-charts.s3.eu-west-1.amazonaws.com/test.svg',
+    );
   });
 });

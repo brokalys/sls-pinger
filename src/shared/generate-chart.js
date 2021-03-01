@@ -11,21 +11,16 @@ export default async function generateChart(fileName, values, maxDate) {
   });
 
   const svgStr = await view.toSVG();
+  const bucketName = `${process.env.STAGE}-pinger-charts`;
 
   await s3
     .putObject({
-      Bucket: `${process.env.STAGE}-pinger-charts`,
+      Bucket: bucketName,
       Key: fileName,
       Body: svgStr,
       ContentType: 'image/svg+xml',
     })
     .promise();
 
-  const url = await s3.getSignedUrlPromise('getObject', {
-    Bucket: `${process.env.STAGE}-pinger-charts`,
-    Key: fileName,
-    Expires: 31557600, // 1 year
-  });
-
-  return url;
+  return `https://${bucketName}.s3.${process.env.REGION}.amazonaws.com/${fileName}`;
 }

@@ -179,7 +179,7 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.stage}-pinger-charts
-        AccessControl: AuthenticatedRead
+        AccessControl: PublicRead
         CorsConfiguration:
           CorsRules:
             - AllowedHeaders: ['*']

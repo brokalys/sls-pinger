@@ -19,7 +19,7 @@ Array [
       },
     },
     "MessageStructure": "string",
-    "TargetArn": "arn:aws:sns:undefined:173751334418:email-undefined",
+    "TargetArn": "arn:aws:sns:undefined:173751334418:email-dev",
   },
 ]
 `;
@@ -43,7 +43,7 @@ Array [
       },
     },
     "MessageStructure": "string",
-    "TargetArn": "arn:aws:sns:undefined:173751334418:email-undefined",
+    "TargetArn": "arn:aws:sns:undefined:173751334418:email-dev",
   },
 ]
 `;

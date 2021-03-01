@@ -8,7 +8,6 @@ export const sns = {
 
 export const s3 = {
   putObject: jest.fn().mockReturnValue({ promise: jest.fn() }),
-  getSignedUrlPromise: jest.fn(),
 };
 
 const aws = {

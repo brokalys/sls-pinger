@@ -6,5 +6,5 @@ module.exports = {
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
   },
-  setupFiles: ['jest-canvas-mock'],
+  setupFiles: ['jest-canvas-mock', './jest.setup.js'],
 };
