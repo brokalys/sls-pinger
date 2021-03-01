@@ -191,3 +191,15 @@ resources:
             - Id: ExpireCharBucketImages
               ExpirationInDays: 90
               Status: Enabled
+    ChartBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: ${self:provider.stage}-pinger-charts
+        PolicyDocument:
+          Statement:
+            - Sid: AllowPublicRead
+              Effect: Allow
+              Principal:
+                AWS: '*'
+              Action: s3:GetObject
+              Resource: arn:aws:s3:::${self:provider.stage}-pinger-charts/*
