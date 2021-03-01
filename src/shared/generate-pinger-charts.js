@@ -68,7 +68,7 @@ export default async function generatePingerCharts(pingers) {
       );
 
       return generateChart(
-        `${id}/${moment().format('YYYY-MM-DD')}.svg`,
+        `${id}.svg`,
         state.entities[id].values,
         (maxDate.isAfter(calculatedFutureDate)
           ? maxDate

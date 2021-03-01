@@ -92,7 +92,7 @@ describe('generate-pinger-charts', () => {
       ]);
 
       expect(generateChart).toBeCalledWith(
-        expect.stringMatching(/^1\/(.*)\.svg$/),
+        '1.svg',
         expect.anything(),
         moment(end).valueOf(),
       );
@@ -119,7 +119,7 @@ describe('generate-pinger-charts', () => {
     const urls = await generatePingerCharts([createPingerFixture()]);
 
     expect(generateChart).toBeCalledWith(
-      expect.stringMatching(/^1\/(.*)\.svg$/),
+      '1.svg',
       expect.anything(),
       moment('2021-01-13').valueOf(),
     );

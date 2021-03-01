@@ -186,11 +186,6 @@ resources:
               AllowedMethods: [GET, PUT]
               AllowedOrigins: ['*']
               MaxAge: '3600'
-        LifecycleConfiguration:
-          Rules:
-            - Id: ExpireCharBucketImages
-              ExpirationInDays: 90
-              Status: Enabled
     ChartBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
