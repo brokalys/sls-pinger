@@ -36,7 +36,7 @@ Array [
       },
     },
     "MessageStructure": "string",
-    "TargetArn": "arn:aws:sns:undefined:173751334418:email-dev",
+    "TargetArn": "arn:aws:sns:eu-west-1:173751334418:email-dev",
   },
 ]
 `;

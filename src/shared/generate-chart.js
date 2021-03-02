@@ -22,5 +22,5 @@ export default async function generateChart(fileName, values, maxDate) {
     })
     .promise();
 
-  return `https://${bucketName}.s3.${process.env.REGION}.amazonaws.com/${fileName}`;
+  return `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 }
