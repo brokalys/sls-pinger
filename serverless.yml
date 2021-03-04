@@ -173,8 +173,7 @@ resources:
     PingerQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:provider.stage}-pinger.fifo
-        FifoQueue: true
+        QueueName: ${self:provider.stage}-pinger
     ChartBucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -198,3 +197,11 @@ resources:
                 AWS: '*'
               Action: s3:GetObject
               Resource: arn:aws:s3:::${self:provider.stage}-pinger-charts/*
+    NewPropertySubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: !GetAtt
+          - PingerQueue
+          - Arn
+        Protocol: sqs
+        TopicArn: arn:aws:sns:${self:provider.region}:173751334418:property-creation-${self:provider.stage}
