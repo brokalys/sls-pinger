@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "handlebars": "^4.0.10",
+    "html-minifier": "^4.0.0",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
     "point-in-polygon": "^1.0.1",

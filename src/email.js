@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Handlebars = require('handlebars');
+const { minify } = require('html-minifier');
 const db = require('./shared/db');
 const ses = require('./shared/ses');
 
@@ -24,7 +25,10 @@ exports.run = async (event, context, callback) => {
     from: 'Brokalys <noreply@brokalys.com>',
     subject: `${process.env.STAGE === 'dev' ? 'DEMO: ' : ''}${subject}`,
     to,
-    html,
+    html: minify(html, {
+      collapseWhitespace: true,
+      minifyCSS: true,
+    }),
     replyTo: 'Matiss <matiss@brokalys.com>',
   };
 
