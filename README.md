@@ -1,6 +1,7 @@
 # Serverless PINGER
 
-[![Build Status](https://travis-ci.com/brokalys/sls-pinger.svg?branch=master)](https://travis-ci.com/brokalys/sls-pinger)
+[![Build status](https://github.com/brokalys/sls-pinger/actions/workflows/deploy.yaml/badge.svg)](https://github.com/brokalys/sls-pinger/actions/workflows/deploy.yaml)
+[![codecov](https://codecov.io/gh/brokalys/sls-pinger/branch/master/graph/badge.svg)](https://codecov.io/gh/brokalys/sls-pinger)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 ## Requirements
@@ -28,7 +29,7 @@ yarn lint
 
 ## Deployment
 
-Travis takes care of deployments. The following command can be used for doing manual deployments.
+Github actions take care of deployments. The following command can be used for doing manual deployments.
 
 ```sh
 yarn deploy
