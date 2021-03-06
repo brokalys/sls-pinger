@@ -5,4 +5,5 @@ module.exports = {
   modulePathIgnorePatterns: ['/.serverless/'],
   setupFiles: ['jest-canvas-mock', './jest.setup.js'],
   collectCoverage: true,
+  collectCoverageFrom: ['src/**/*.js', '!**/__fixtures__/*'],
 };
