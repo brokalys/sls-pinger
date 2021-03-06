@@ -18,11 +18,12 @@ const startOfMonth = moment.utc().startOf('month').toDate();
 function getPingersByFrequency(frequency) {
   return connection.query({
     sql: `
-      SELECT *
-      FROM pinger_emails
-      WHERE unsubscribed_at IS NULL
-        AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
-        AND frequency = ?
+      SELECT pinger.*, (CASE WHEN premium.email IS NULL THEN false ELSE true END) as is_premium
+      FROM pinger_emails as pinger
+      LEFT JOIN pinger_premium_emails premium ON premium.email = pinger.email
+      WHERE pinger.unsubscribed_at IS NULL
+        AND (pinger.limit_reached_at IS NULL OR pinger.limit_reached_at < ? OR premium.email IS NOT NULL)
+        AND pinger.frequency = ?
    `,
     values: [startOfMonth, frequency],
     typeCast(field, next) {
@@ -32,6 +33,10 @@ function getPingersByFrequency(frequency) {
 
       if (field.name === 'categories' || field.name === 'types') {
         return JSON.parse(field.string());
+      }
+
+      if (field.name === 'is_premium') {
+        return field.string() === '1';
       }
 
       return next();
@@ -79,8 +84,9 @@ async function getEmailsThatShouldBeLimitLocked() {
         SELECT em.email
         FROM pinger_log lo
         INNER JOIN pinger_emails em ON em.id = lo.pinger_id
+        LEFT JOIN pinger_premium_emails premium ON premium.email = em.email
         WHERE lo.created_at >= ?
-          AND em.is_premium = false
+          AND premium.email IS NULL
         GROUP BY em.email
         HAVING COUNT(*) >= ?
       `,
@@ -147,10 +153,11 @@ function updatePingerAttemptTimestamp(id) {
 function getAvailablePingers() {
   return connection.query({
     sql: `
-      SELECT *
-      FROM pinger_emails
-      WHERE unsubscribed_at IS NULL
-        AND (limit_reached_at IS NULL OR limit_reached_at < ? OR is_premium = true)
+      SELECT pinger.*, (CASE WHEN premium.email IS NULL THEN false ELSE true END) as is_premium
+      FROM pinger_emails pinger
+      LEFT JOIN pinger_premium_emails premium ON premium.email = pinger.email
+      WHERE pinger.unsubscribed_at IS NULL
+        AND (pinger.limit_reached_at IS NULL OR pinger.limit_reached_at < ? OR premium.email IS NOT NULL)
     `,
     values: [moment.utc().startOf('month').toDate()],
     typeCast(field, next) {
@@ -160,6 +167,10 @@ function getAvailablePingers() {
 
       if (field.name === 'categories' || field.name === 'types') {
         return JSON.parse(field.string());
+      }
+
+      if (field.name === 'is_premium') {
+        return field.string() === '1';
       }
 
       return next();
