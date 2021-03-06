@@ -45,8 +45,6 @@ provider:
     DB_DATABASE: ${env:DB_DATABASE}
     DB_USERNAME: ${env:DB_USERNAME}
     DB_PASSWORD: ${env:DB_PASSWORD}
-    MAILGUN_API_KEY: ${env:MAILGUN_API_KEY}
-    MAILGUN_DOMAIN: ${env:MAILGUN_DOMAIN}
 
 functions:
   email:

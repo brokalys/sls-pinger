@@ -1,0 +1,16 @@
+name: Build, Test
+on:
+  push:
+    branches-ignore: [master]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn test
+      - run: yarn build
