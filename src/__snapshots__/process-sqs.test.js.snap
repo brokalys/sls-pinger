@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`process-sqs works with multiple PINGERs w/ multi-invocation frequencies 1`] = `
+Object {
+  "area": 45,
+  "calc_price_per_sqm": 122.32,
+  "category": "apartment",
+  "content": "",
+  "images": Array [],
+  "is_premium": true,
+  "lat": 56.9965,
+  "lng": 24.245176,
+  "price": "100,000",
+  "rooms": 2,
+  "type": "sell",
+  "unsubscribe_url": "https://unsubscribe.brokalys.com/?key=undefined&id=111111",
+  "url": "https://view.brokalys.com/?link=https%3A%2F%2Fbrokalys.com%2F",
+}
+`;

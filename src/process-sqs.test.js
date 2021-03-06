@@ -115,4 +115,32 @@ describe('process-sqs', () => {
     expect(sns.publish).not.toBeCalled();
     expect(db.getAvailablePingers).toBeCalledTimes(1);
   });
+
+  test('works with multiple PINGERs w/ multi-invocation frequencies', async () => {
+    const event = {
+      Records: createMockRecords([createPropertyFixture()]),
+    };
+    db.getAvailablePingers.mockReturnValue([
+      createPingerFixture({ id_hash: '111111' }),
+      createPingerFixture({
+        id_hash: '222222',
+        rooms_min: 4,
+      }),
+      createPingerFixture({
+        id_hash: '333333',
+        frequency: 'weekly',
+      }),
+    ]);
+
+    await run(event, context);
+
+    expect(sns.publish).toBeCalledTimes(1);
+    expect(
+      JSON.parse(
+        sns.publish.mock.calls[0][0].MessageAttributes.template_variables
+          .StringValue,
+      ),
+    ).toMatchSnapshot();
+    expect(db.queuePingerForSummaryEmail).toBeCalledTimes(1);
+  });
 });

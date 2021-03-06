@@ -103,7 +103,7 @@ exports.run = async (event, context) => {
   await Promise.all(
     availableInvocations
       .map((pinger) => {
-        const result = pinger.property;
+        const result = { ...pinger.property };
         result.images = parseImages(result.images);
         result.content = nl2br(
           (result.content || '').replace(/(<([^>]+)>)/gi, ''),
