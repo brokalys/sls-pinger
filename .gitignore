@@ -1,9 +1,6 @@
 .serverless/
-_optimize/
 node_modules/
 
 .DS_Store
 .env
-previous-date.txt
-previous-date-leads.txt
 .eslintcache
