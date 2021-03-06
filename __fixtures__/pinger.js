@@ -1,6 +1,7 @@
 function createPingerFixture(customData = {}) {
   return {
     id: 1,
+    id_hash: 'c8bf6e7b-7eba-11eb-b2a8-663c33f40218',
     categories: ['apartment'],
     types: ['sell'],
     price_min: 100000,

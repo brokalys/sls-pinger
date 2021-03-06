@@ -61,6 +61,7 @@ module.exports = async function generatePingerCharts(pingers) {
 
   const urls = await Promise.all(
     idsWithCharts.map((id) => {
+      const idHash = pingerHashMap[id].id_hash;
       const maxDate = moment(state.entities[id].maxDate);
       const calculatedFutureDate = moment(state.entities[id].minDate).add(
         11,
@@ -68,7 +69,7 @@ module.exports = async function generatePingerCharts(pingers) {
       );
 
       return generateChart(
-        `${id}.svg`,
+        `${idHash}.svg`,
         state.entities[id].values,
         (maxDate.isAfter(calculatedFutureDate)
           ? maxDate
