@@ -173,7 +173,22 @@ resources:
     PingerQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:provider.stage}-pinger
+        QueueName: ${self:provider.stage}-pinger.fifo
+        FifoQueue: true
+    PingerQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Statement:
+            - Sid: Allow-SNS-SendMessage
+              Effect: Allow
+              Principal:
+                AWS: '*'
+              Resource: '*'
+              Action:
+                - SQS:SendMessage
+        Queues:
+          - !Ref PingerQueue
     ChartBucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -200,8 +215,6 @@ resources:
     NewPropertySubscription:
       Type: AWS::SNS::Subscription
       Properties:
-        Endpoint: !GetAtt
-          - PingerQueue
-          - Arn
+        Endpoint: !GetAtt PingerQueue.Arn
         Protocol: sqs
-        TopicArn: arn:aws:sns:${self:provider.region}:173751334418:property-creation-${self:provider.stage}
+        TopicArn: arn:aws:sns:${self:provider.region}:173751334418:property-creation-${self:provider.stage}.fifo
