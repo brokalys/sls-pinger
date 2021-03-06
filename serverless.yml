@@ -16,18 +16,23 @@ provider:
         - Effect: Allow
           Action:
             - SNS:Publish
-          Resource: 'arn:aws:sns:eu-west-1:*:*'
+          Resource: '${self:custom.emailSnsTopicArn}'
         - Effect: Allow
           Action:
             - SES:SendEmail
-          Resource: 'arn:aws:ses:eu-west-1:*:*'
+          Resource: '*'
         - Effect: Allow
           Action:
             - S3:PutObject
             - S3:GetObject
-          Resource: 'arn:aws:s3:::${self:provider.stage}-pinger-charts/*'
+          Resource: !Join
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref ChartBucket
+              - /*
   environment:
     STAGE: ${opt:stage, 'dev'}
+    EMAIL_SNS_TOPIC_NAME: ${self:custom.emailSnsTopicName}
     DB_HOST: ${env:DB_HOST}
     DB_DATABASE: ${env:DB_DATABASE}
     DB_USERNAME: ${env:DB_USERNAME}
@@ -43,7 +48,9 @@ functions:
     timeout: 10
     handler: src/email.run
     events:
-      - sns: email-${self:provider.stage}
+      - sns:
+          arn: ${self:custom.emailSnsTopicArn}
+          topicName: ${self:custom.emailSnsTopicName}
     alarms:
       - name: emailErrors
         description: 'Pinger: email sending errors'
@@ -136,6 +143,13 @@ functions:
         treatMissingData: notBreaching
 
 custom:
+  emailSnsTopicName: ${self:service}-${self:provider.stage}-email
+  emailSnsTopicArn: !Join
+    - ':'
+    - - 'arn:aws:sns'
+      - !Ref AWS::Region
+      - !Ref AWS::AccountId
+      - !GetAtt EmailSnsTopic.TopicName
   alerts:
     stages:
       - prod
@@ -170,6 +184,10 @@ plugins:
 
 resources:
   Resources:
+    EmailSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.emailSnsTopicName}
     PingerQueue:
       Type: AWS::SQS::Queue
       Properties:
@@ -184,9 +202,12 @@ resources:
               Effect: Allow
               Principal:
                 AWS: '*'
-              Resource: '*'
+              Resource: !GetAtt PingerQueue.Arn
               Action:
                 - SQS:SendMessage
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: !ImportValue PropertyCreationTopic-Arn-${self:provider.stage}
         Queues:
           - !Ref PingerQueue
     ChartBucket:
@@ -197,13 +218,13 @@ resources:
         CorsConfiguration:
           CorsRules:
             - AllowedHeaders: ['*']
-              AllowedMethods: [GET, PUT]
+              AllowedMethods: [GET]
               AllowedOrigins: ['*']
               MaxAge: '3600'
     ChartBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: ${self:provider.stage}-pinger-charts
+        Bucket: !Ref ChartBucket
         PolicyDocument:
           Statement:
             - Sid: AllowPublicRead
@@ -211,10 +232,14 @@ resources:
               Principal:
                 AWS: '*'
               Action: s3:GetObject
-              Resource: arn:aws:s3:::${self:provider.stage}-pinger-charts/*
+              Resource: !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref ChartBucket
+                  - /*
     NewPropertySubscription:
       Type: AWS::SNS::Subscription
       Properties:
         Endpoint: !GetAtt PingerQueue.Arn
         Protocol: sqs
-        TopicArn: arn:aws:sns:${self:provider.region}:173751334418:property-creation-${self:provider.stage}.fifo
+        TopicArn: !ImportValue PropertyCreationTopic-Arn-${self:provider.stage}

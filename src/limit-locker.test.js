@@ -12,6 +12,10 @@ jest.mock('./shared/sns');
 const TEST_EMAIL_1 = 'test+1@brokalys.com';
 const TEST_EMAIL_2 = 'test+2@brokalys.com';
 
+const context = {
+  invokedFunctionArn: 'arn:aws:lambda:eu-west-1:111111111111:lambda',
+};
+
 describe('limit-locker', () => {
   afterEach(jest.clearAllMocks);
 
@@ -22,7 +26,7 @@ describe('limit-locker', () => {
     ]);
     db.getEmailsWithLimitLockerNotification.mockReturnValue([]);
 
-    await run();
+    await run({}, context);
 
     expect(sns.publish).toBeCalledTimes(2);
     expect(sns.publish.mock.calls[0]).toMatchSnapshot();
@@ -35,7 +39,7 @@ describe('limit-locker', () => {
     ]);
     db.getEmailsWithLimitLockerNotification.mockReturnValue([TEST_EMAIL_1]);
 
-    await run();
+    await run({}, context);
 
     expect(sns.publish).toBeCalledTimes(1);
     expect(sns.publish.mock.calls[0]).toMatchSnapshot();
@@ -44,7 +48,7 @@ describe('limit-locker', () => {
   test('stops early if no emails should be limit-locked', async () => {
     db.getEmailsThatShouldBeLimitLocked.mockReturnValue([]);
 
-    await run();
+    await run({}, context);
 
     expect(db.limitLockPingerEmails).not.toBeCalled();
     expect(sns.publish).not.toBeCalled();
@@ -53,7 +57,7 @@ describe('limit-locker', () => {
   test('updates the limit-locked timestamp for locked emails', async () => {
     db.getEmailsThatShouldBeLimitLocked.mockReturnValue([TEST_EMAIL_1]);
 
-    await run();
+    await run({}, context);
 
     expect(db.limitLockPingerEmails).toBeCalledWith([TEST_EMAIL_1]);
   });

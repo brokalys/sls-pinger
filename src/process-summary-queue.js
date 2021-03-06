@@ -2,11 +2,12 @@ import * as db from './shared/db';
 import generatePingerCharts from './shared/generate-pinger-charts';
 import sns from './shared/sns';
 import createUnsubscribeLink from './shared/unsubscribe-link';
+import * as utils from './shared/utils';
 
 const FREE_LIMIT = 100;
 const PREMIUM_LIMIT = 500;
 
-export async function run(event, context = {}) {
+export async function run(event, context) {
   const { frequency = 'daily' } = event;
   context.callbackWaitsForEmptyEventLoop = false;
 
@@ -68,7 +69,7 @@ export async function run(event, context = {}) {
   // Publish SNS notification to send email for each PINGER that has properties
   await Promise.all(
     pingersWithProperties.map((pinger) =>
-      sendEmail(pinger, properties[pinger.id], urls[pinger.id]),
+      sendEmail(context, pinger, properties[pinger.id], urls[pinger.id]),
     ),
   );
 
@@ -76,7 +77,7 @@ export async function run(event, context = {}) {
   await db.deletePropertyQueueItems(propertyQueueIds);
 }
 
-function sendEmail(pinger, properties, heroImgUrl) {
+function sendEmail(context, pinger, properties, heroImgUrl) {
   const propertyLimit = pinger.is_premium ? PREMIUM_LIMIT : FREE_LIMIT;
 
   return sns
@@ -113,7 +114,7 @@ function sendEmail(pinger, properties, heroImgUrl) {
         },
       },
       MessageStructure: 'string',
-      TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
+      TargetArn: utils.constructArn(context, process.env.EMAIL_SNS_TOPIC_NAME),
     })
     .promise();
 }

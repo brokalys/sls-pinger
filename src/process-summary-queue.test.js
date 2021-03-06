@@ -13,6 +13,10 @@ jest.mock('./shared/generate-pinger-charts', () =>
 );
 jest.mock('./shared/sns');
 
+const context = {
+  invokedFunctionArn: 'arn:aws:lambda:eu-west-1:111111111111:lambda',
+};
+
 describe('process-summary-queue', () => {
   afterEach(jest.clearAllMocks);
 
@@ -24,7 +28,7 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ id: 3 }),
     ]);
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(sns.publish).toBeCalledTimes(1);
     expect(sns.publish.mock.calls[0]).toMatchSnapshot();
@@ -40,7 +44,7 @@ describe('process-summary-queue', () => {
         .map((row, index) => createPropertyQueueItemFixture({ id: index })),
     );
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(sns.publish).toBeCalledTimes(1);
 
@@ -62,7 +66,7 @@ describe('process-summary-queue', () => {
         .map((row, index) => createPropertyQueueItemFixture({ id: index })),
     );
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(sns.publish).toBeCalledTimes(1);
 
@@ -84,7 +88,7 @@ describe('process-summary-queue', () => {
       }),
     ]);
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(db.createPingerStatsEntry).toBeCalledTimes(1);
     expect(db.createPingerStatsEntry.mock.calls[0]).toMatchSnapshot();
@@ -96,7 +100,7 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ data: { calc_price_per_sqm: null } }),
     ]);
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(db.createPingerStatsEntry).not.toBeCalled();
   });
@@ -109,7 +113,7 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ id: 3 }),
     ]);
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(sns.publish).toBeCalledTimes(0);
   });
@@ -118,7 +122,7 @@ describe('process-summary-queue', () => {
     db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);
     db.getPropertyQueueForPingers.mockReturnValue([]);
 
-    await run({ frequency: 'daily' });
+    await run({ frequency: 'daily' }, context);
 
     expect(sns.publish).toBeCalledTimes(0);
   });
@@ -134,7 +138,7 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ id: 3, pinger_id: 2 }),
     ]);
 
-    await run({ frequency: 'weekly' });
+    await run({ frequency: 'weekly' }, context);
 
     expect(sns.publish).toBeCalledTimes(2);
   });
@@ -147,7 +151,7 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ id: 3 }),
     ]);
 
-    await run({ frequency: 'monthly' });
+    await run({ frequency: 'monthly' }, context);
 
     expect(db.lockPropertyQueueItems).toBeCalledWith([1, 2, 3]);
     expect(db.deletePropertyQueueItems).toBeCalledWith([1, 2, 3]);
@@ -166,7 +170,7 @@ describe('process-summary-queue', () => {
       1: 'https://url.for/chart.svg',
     });
 
-    await run({ frequency: 'weekly' });
+    await run({ frequency: 'weekly' }, context);
 
     const deepHeroImgMatcher = expect.objectContaining({
       MessageAttributes: expect.objectContaining({
@@ -189,7 +193,7 @@ describe('process-summary-queue', () => {
       createPropertyQueueItemFixture({ pinger_id: 1 }),
     ]);
 
-    await run({ frequency: 'weekly' });
+    await run({ frequency: 'weekly' }, context);
 
     expect(generatePingerCharts.mock.invocationCallOrder[0]).toBeGreaterThan(
       db.createPingerStatsEntry.mock.invocationCallOrder[0],
@@ -204,7 +208,7 @@ describe('process-summary-queue', () => {
         createPropertyQueueItemFixture(),
       ]);
 
-      await run({ frequency: 'weekly' });
+      await run({ frequency: 'weekly' }, context);
 
       expect(sns.publish.mock.calls[0][0]).toEqual(
         expect.objectContaining({
@@ -221,7 +225,7 @@ describe('process-summary-queue', () => {
   test('does nothing if no pingers with the given frequency', async () => {
     db.getPingersByFrequency.mockReturnValue([]);
 
-    await run({ frequency: 'monthly' });
+    await run({ frequency: 'monthly' }, context);
 
     expect(db.getPropertyQueueForPingers).not.toBeCalled();
   });

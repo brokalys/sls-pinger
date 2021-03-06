@@ -19,7 +19,7 @@ Array [
       },
     },
     "MessageStructure": "string",
-    "TargetArn": "arn:aws:sns:eu-west-1:173751334418:email-dev",
+    "TargetArn": "arn:aws:sns:eu-west-1:111111111111:email-dev",
   },
 ]
 `;
@@ -43,7 +43,7 @@ Array [
       },
     },
     "MessageStructure": "string",
-    "TargetArn": "arn:aws:sns:eu-west-1:173751334418:email-dev",
+    "TargetArn": "arn:aws:sns:eu-west-1:111111111111:email-dev",
   },
 ]
 `;

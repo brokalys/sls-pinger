@@ -3,6 +3,7 @@ import inside from 'point-in-polygon';
 import * as db from './shared/db';
 import sns from './shared/sns';
 import createUnsubscribeLink from './shared/unsubscribe-link';
+import * as utils from './shared/utils';
 
 function parseLocation(location) {
   return location
@@ -123,19 +124,19 @@ export async function run(event, context) {
           frequency: pinger.frequency,
         };
       })
-      .map(performAction),
+      .map((data) => performAction(data, context)),
   );
 }
 
-function performAction(data) {
+function performAction(data, context) {
   if (data.frequency === 'immediate') {
-    return publishSns(data);
+    return publishSns(data, context);
   }
 
   return queuePinger(data);
 }
 
-function publishSns(data) {
+function publishSns(data, context) {
   return sns
     .publish({
       Message: 'email',
@@ -162,7 +163,7 @@ function publishSns(data) {
         },
       },
       MessageStructure: 'string',
-      TargetArn: `arn:aws:sns:${process.env.AWS_REGION}:173751334418:email-${process.env.STAGE}`,
+      TargetArn: utils.constructArn(context, process.env.EMAIL_SNS_TOPIC_NAME),
     })
     .promise();
 }

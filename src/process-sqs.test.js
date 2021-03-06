@@ -12,6 +12,10 @@ function createMockRecords(records) {
   }));
 }
 
+const context = {
+  invokedFunctionArn: 'arn:aws:lambda:eu-west-1:111111111111:lambda',
+};
+
 describe('process-sqs', () => {
   afterEach(jest.clearAllMocks);
 
@@ -27,7 +31,7 @@ describe('process-sqs', () => {
         }),
       ]);
 
-      await run(event);
+      await run(event, context);
 
       expect(sns.publish).toBeCalledTimes(1);
       expect(db.getAvailablePingers).toBeCalledTimes(1);
@@ -50,7 +54,7 @@ describe('process-sqs', () => {
         }),
       ]);
 
-      await run(event);
+      await run(event, context);
 
       expect(sns.publish).toBeCalledTimes(1);
       expect(db.getAvailablePingers).toBeCalledTimes(1);
@@ -73,7 +77,7 @@ describe('process-sqs', () => {
         }),
       ]);
 
-      await run(event);
+      await run(event, context);
 
       expect(sns.publish).toBeCalledTimes(1);
       expect(db.getAvailablePingers).toBeCalledTimes(1);
@@ -94,7 +98,7 @@ describe('process-sqs', () => {
         }),
       ]);
 
-      await run(event);
+      await run(event, context);
 
       expect(sns.publish).not.toBeCalled();
       expect(db.queuePingerForSummaryEmail).toBeCalled();
@@ -106,7 +110,7 @@ describe('process-sqs', () => {
       Records: createMockRecords([createPropertyFixture({ lat: 59.9965 })]),
     };
 
-    await run(event);
+    await run(event, context);
 
     expect(sns.publish).not.toBeCalled();
     expect(db.getAvailablePingers).toBeCalledTimes(1);
