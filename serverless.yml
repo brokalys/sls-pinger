@@ -31,7 +31,7 @@ provider:
               - !Ref ChartBucket
               - /*
   environment:
-    STAGE: ${opt:stage, 'dev'}
+    STAGE: ${self:provider.stage}
     EMAIL_SNS_TOPIC_NAME: ${self:custom.emailSnsTopicName}
     DB_HOST: ${env:DB_HOST}
     DB_DATABASE: ${env:DB_DATABASE}
@@ -243,3 +243,4 @@ resources:
         Endpoint: !GetAtt PingerQueue.Arn
         Protocol: sqs
         TopicArn: !ImportValue PropertyCreationTopic-Arn-${self:provider.stage}
+        RawMessageDelivery: true
