@@ -1,7 +1,7 @@
-import * as db from './shared/db';
-import sns from './shared/sns';
-import { run } from './process-sqs';
-import { createPingerFixture, createPropertyFixture } from '__fixtures__';
+const db = require('./shared/db');
+const sns = require('./shared/sns');
+const { run } = require('./process-sqs');
+const { createPingerFixture, createPropertyFixture } = require('__fixtures__');
 
 jest.mock('./shared/db');
 jest.mock('./shared/sns');

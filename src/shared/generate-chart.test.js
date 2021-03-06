@@ -1,6 +1,6 @@
-import moment from 'moment';
-import s3 from './s3';
-import generateChart from './generate-chart';
+const moment = require('moment');
+const s3 = require('./s3');
+const generateChart = require('./generate-chart');
 
 jest.mock('./s3');
 

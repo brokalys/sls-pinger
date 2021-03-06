@@ -1,4 +1,4 @@
-export function createPingerFixture(customData = {}) {
+function createPingerFixture(customData = {}) {
   return {
     id: 1,
     categories: ['apartment'],
@@ -19,3 +19,5 @@ export function createPingerFixture(customData = {}) {
     ...customData,
   };
 }
+
+module.exports = { createPingerFixture };

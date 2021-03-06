@@ -1,3 +1,3 @@
-import AWS from 'aws-sdk';
+const AWS = require('aws-sdk');
 
-export default new AWS.S3();
+module.exports = new AWS.S3();

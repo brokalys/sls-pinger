@@ -1,7 +1,7 @@
-import fs from 'fs';
-import Handlebars from 'handlebars';
-import * as db from './shared/db';
-import ses from './shared/ses';
+const fs = require('fs');
+const Handlebars = require('handlebars');
+const db = require('./shared/db');
+const ses = require('./shared/ses');
 
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;

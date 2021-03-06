@@ -1,2 +1,7 @@
-export * from './pinger';
-export * from './property';
+const pinger = require('./pinger');
+const property = require('./property');
+
+module.exports = {
+  ...pinger,
+  ...property,
+};

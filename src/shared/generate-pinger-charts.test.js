@@ -1,8 +1,11 @@
-import moment from 'moment';
-import * as db from './db';
-import generateChart from './generate-chart';
-import generatePingerCharts from './generate-pinger-charts';
-import { createPingerFixture, createPropertyStatFixture } from '__fixtures__';
+const moment = require('moment');
+const db = require('./db');
+const generateChart = require('./generate-chart');
+const generatePingerCharts = require('./generate-pinger-charts');
+const {
+  createPingerFixture,
+  createPropertyStatFixture,
+} = require('__fixtures__');
 
 jest.mock('./db');
 jest.mock('./generate-chart', () => jest.fn().mockResolvedValue('url'));

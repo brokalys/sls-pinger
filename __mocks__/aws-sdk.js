@@ -1,12 +1,12 @@
-export const ses = {
+const ses = {
   sendEmail: jest.fn().mockReturnValue({ promise: jest.fn() }),
 };
 
-export const sns = {
+const sns = {
   publish: jest.fn().mockReturnValue({ promise: jest.fn() }),
 };
 
-export const s3 = {
+const s3 = {
   putObject: jest.fn().mockReturnValue({ promise: jest.fn() }),
 };
 
@@ -19,4 +19,9 @@ const aws = {
   },
 };
 
-export default aws;
+module.exports = {
+  ses,
+  sns,
+  s3,
+  ...aws,
+};

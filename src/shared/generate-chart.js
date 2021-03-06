@@ -1,8 +1,8 @@
-import * as vega from 'vega';
-import chartBase from './data/base-chart.json';
-import s3 from './s3';
+const vega = require('vega');
+const chartBase = require('./data/base-chart.json');
+const s3 = require('./s3');
 
-export default async function generateChart(fileName, values, maxDate) {
+module.exports = async function generateChart(fileName, values, maxDate) {
   chartBase.data[0].values = values;
   chartBase.scales[0].domainMax = maxDate;
 
@@ -23,4 +23,4 @@ export default async function generateChart(fileName, values, maxDate) {
     .promise();
 
   return `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
-}
+};

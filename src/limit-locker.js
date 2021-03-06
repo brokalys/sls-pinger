@@ -1,6 +1,6 @@
-import * as db from './shared/db';
-import sns from './shared/sns';
-import * as utils from './shared/utils';
+const db = require('./shared/db');
+const sns = require('./shared/sns');
+const utils = require('./shared/utils');
 
 exports.run = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;

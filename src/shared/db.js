@@ -1,5 +1,5 @@
-import serverlessMysql from 'serverless-mysql';
-import moment from 'moment';
+const serverlessMysql = require('serverless-mysql');
+const moment = require('moment');
 
 const connection = serverlessMysql({
   config: {
@@ -15,7 +15,7 @@ const connection = serverlessMysql({
 const MAX_MONTHLY_EMAILS = 100;
 const startOfMonth = moment.utc().startOf('month').toDate();
 
-export function getPingersByFrequency(frequency) {
+function getPingersByFrequency(frequency) {
   return connection.query({
     sql: `
       SELECT *
@@ -39,7 +39,7 @@ export function getPingersByFrequency(frequency) {
   });
 }
 
-export function getPropertyQueueForPingers(pingerIds) {
+function getPropertyQueueForPingers(pingerIds) {
   return connection.query({
     sql: `
       SELECT *
@@ -51,7 +51,7 @@ export function getPropertyQueueForPingers(pingerIds) {
   });
 }
 
-export function lockPropertyQueueItems(itemIds) {
+function lockPropertyQueueItems(itemIds) {
   return connection.query({
     sql: `
       UPDATE pinger_queue
@@ -62,7 +62,7 @@ export function lockPropertyQueueItems(itemIds) {
   });
 }
 
-export function deletePropertyQueueItems(itemIds) {
+function deletePropertyQueueItems(itemIds) {
   return connection.query({
     sql: `
       DELETE FROM pinger_queue
@@ -72,7 +72,7 @@ export function deletePropertyQueueItems(itemIds) {
   });
 }
 
-export async function getEmailsThatShouldBeLimitLocked() {
+async function getEmailsThatShouldBeLimitLocked() {
   return (
     await connection.query(
       `
@@ -89,7 +89,7 @@ export async function getEmailsThatShouldBeLimitLocked() {
   ).map((row) => row.email);
 }
 
-export async function getEmailsWithLimitLockerNotification(emails) {
+async function getEmailsWithLimitLockerNotification(emails) {
   return (
     await connection.query({
       sql: `
@@ -104,7 +104,7 @@ export async function getEmailsWithLimitLockerNotification(emails) {
   ).map((row) => row.to);
 }
 
-export function limitLockPingerEmails(emails) {
+function limitLockPingerEmails(emails) {
   return connection.query(
     `
       UPDATE pinger_emails
@@ -117,7 +117,7 @@ export function limitLockPingerEmails(emails) {
   );
 }
 
-export function createPingerStatsEntry(pingerId, data) {
+function createPingerStatsEntry(pingerId, data) {
   return connection.query(
     `
       INSERT INTO pinger_property_stats
@@ -130,21 +130,21 @@ export function createPingerStatsEntry(pingerId, data) {
   );
 }
 
-export function logPingerAttempt(values) {
+function logPingerAttempt(values) {
   return connection.query({
     sql: 'INSERT INTO pinger_log SET ?',
     values,
   });
 }
 
-export function updatePingerAttemptTimestamp(id) {
+function updatePingerAttemptTimestamp(id) {
   return connection.query({
     sql: `UPDATE pinger_log SET sent_at = NOW() WHERE id = ?`,
     values: [id],
   });
 }
 
-export function getAvailablePingers() {
+function getAvailablePingers() {
   return connection.query({
     sql: `
       SELECT *
@@ -167,7 +167,7 @@ export function getAvailablePingers() {
   });
 }
 
-export function queuePingerForSummaryEmail(pingerId, data) {
+function queuePingerForSummaryEmail(pingerId, data) {
   return connection.query({
     sql: `
       INSERT INTO pinger_queue
@@ -180,7 +180,7 @@ export function queuePingerForSummaryEmail(pingerId, data) {
   });
 }
 
-export function getPropertyStats(pingerIds) {
+function getPropertyStats(pingerIds) {
   return connection.query({
     sql: `
       SELECT *
@@ -199,3 +199,19 @@ export function getPropertyStats(pingerIds) {
     },
   });
 }
+
+module.exports = {
+  getPingersByFrequency,
+  getPropertyQueueForPingers,
+  lockPropertyQueueItems,
+  deletePropertyQueueItems,
+  getEmailsThatShouldBeLimitLocked,
+  getEmailsWithLimitLockerNotification,
+  limitLockPingerEmails,
+  createPingerStatsEntry,
+  logPingerAttempt,
+  updatePingerAttemptTimestamp,
+  getAvailablePingers,
+  queuePingerForSummaryEmail,
+  getPropertyStats,
+};

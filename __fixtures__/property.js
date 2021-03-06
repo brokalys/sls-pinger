@@ -1,4 +1,4 @@
-export function createPropertyFixture(customData = {}) {
+function createPropertyFixture(customData = {}) {
   return {
     category: 'apartment',
     type: 'sell',
@@ -13,7 +13,7 @@ export function createPropertyFixture(customData = {}) {
   };
 }
 
-export function createPropertyQueueItemFixture(customData = {}) {
+function createPropertyQueueItemFixture(customData = {}) {
   return {
     id: 1,
     pinger_id: 1,
@@ -23,7 +23,7 @@ export function createPropertyQueueItemFixture(customData = {}) {
   };
 }
 
-export function createPropertyStatFixture(customData = {}) {
+function createPropertyStatFixture(customData = {}) {
   return {
     id: 1,
     pinger_id: 1,
@@ -32,3 +32,9 @@ export function createPropertyStatFixture(customData = {}) {
     ...customData,
   };
 }
+
+module.exports = {
+  createPropertyFixture,
+  createPropertyQueueItemFixture,
+  createPropertyStatFixture,
+};

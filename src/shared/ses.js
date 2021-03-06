@@ -1,3 +1,3 @@
-import AWS from 'aws-sdk';
+const AWS = require('aws-sdk');
 
-export default new AWS.SES({ region: process.env.AWS_REGION });
+module.exports = new AWS.SES({ region: process.env.AWS_REGION });

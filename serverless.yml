@@ -1,6 +1,14 @@
 service: brokalys-pinger
 useDotenv: true
 
+package:
+  individually: true
+  exclude:
+    - '**/*'
+  include:
+    - src/shared/*
+    - '!src/shared/*.test.js'
+
 provider:
   name: aws
   region: eu-west-1
@@ -47,6 +55,12 @@ functions:
     reservedConcurrency: 4
     timeout: 10
     handler: src/email.run
+    package:
+      include:
+        - src/email.js
+        - src/templates/*
+        - src/test/email.json
+        - src/test/email-summary.json
     events:
       - sns:
           arn: ${self:custom.emailSnsTopicArn}
@@ -80,6 +94,9 @@ functions:
     description: Lock pingers that have reached the monthly lockout threshold.
     timeout: 3
     handler: src/limit-locker.run
+    package:
+      include:
+        - src/limit-locker.js
     events:
       - schedule:
           rate: rate(10 minutes)
@@ -100,6 +117,10 @@ functions:
     name: BrokalysPinger-ProcessSqs-${self:provider.stage}
     description: Process SQS to trigger pinger email sending.
     handler: src/process-sqs.run
+    package:
+      include:
+        - src/process-sqs.js
+        - src/test/process-sqs.json
     reservedConcurrency: 5
     events:
       - sqs:
@@ -113,6 +134,9 @@ functions:
     name: BrokalysPinger-ProcessSummaryQueue-${self:provider.stage}
     description: Process pinger summary queue
     handler: src/process-summary-queue.run
+    package:
+      include:
+        - src/process-summary-queue.js
     reservedConcurrency: 1
     events:
       - schedule:
@@ -166,11 +190,6 @@ custom:
           - protocol: email
             endpoint: matiss@brokalys.com
 
-  webpack:
-    webpackConfig: 'webpack.config.js'
-    includeModules: false
-    packager: 'yarn'
-
   serverless-layers:
     packageManager: yarn
     dependenciesPath: ./package.json
@@ -179,7 +198,6 @@ custom:
 
 plugins:
   - serverless-plugin-aws-alerts
-  - serverless-webpack
   - serverless-layers
 
 resources:

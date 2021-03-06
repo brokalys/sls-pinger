@@ -1,13 +1,13 @@
-import * as db from './shared/db';
-import generatePingerCharts from './shared/generate-pinger-charts';
-import sns from './shared/sns';
-import createUnsubscribeLink from './shared/unsubscribe-link';
-import * as utils from './shared/utils';
+const db = require('./shared/db');
+const generatePingerCharts = require('./shared/generate-pinger-charts');
+const sns = require('./shared/sns');
+const createUnsubscribeLink = require('./shared/unsubscribe-link');
+const utils = require('./shared/utils');
 
 const FREE_LIMIT = 100;
 const PREMIUM_LIMIT = 500;
 
-export async function run(event, context) {
+exports.run = async (event, context) => {
   const { frequency = 'daily' } = event;
   context.callbackWaitsForEmptyEventLoop = false;
 
@@ -75,7 +75,7 @@ export async function run(event, context) {
 
   // Delete the property queue from DB
   await db.deletePropertyQueueItems(propertyQueueIds);
-}
+};
 
 function sendEmail(context, pinger, properties, heroImgUrl) {
   const propertyLimit = pinger.is_premium ? PREMIUM_LIMIT : FREE_LIMIT;

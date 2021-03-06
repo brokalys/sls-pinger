@@ -1,10 +1,10 @@
-import * as db from './shared/db';
-import sns from './shared/sns';
-import { run } from './limit-locker';
-import {
+const db = require('./shared/db');
+const sns = require('./shared/sns');
+const { run } = require('./limit-locker');
+const {
   createPingerFixture,
   createPropertyQueueItemFixture,
-} from '__fixtures__';
+} = require('__fixtures__');
 
 jest.mock('./shared/db');
 jest.mock('./shared/sns');

@@ -1,9 +1,9 @@
-import numeral from 'numeral';
-import inside from 'point-in-polygon';
-import * as db from './shared/db';
-import sns from './shared/sns';
-import createUnsubscribeLink from './shared/unsubscribe-link';
-import * as utils from './shared/utils';
+const numeral = require('numeral');
+const inside = require('point-in-polygon');
+const db = require('./shared/db');
+const sns = require('./shared/sns');
+const createUnsubscribeLink = require('./shared/unsubscribe-link');
+const utils = require('./shared/utils');
 
 function parseLocation(location) {
   return location
@@ -33,7 +33,7 @@ function parseImages(img) {
   return JSON.parse(img);
 }
 
-export async function run(event, context) {
+exports.run = async (event, context) => {
   const properties = event.Records.map((row) => JSON.parse(row.body)).filter(
     (property) =>
       property.lat &&
@@ -126,7 +126,7 @@ export async function run(event, context) {
       })
       .map((data) => performAction(data, context)),
   );
-}
+};
 
 function performAction(data, context) {
   if (data.frequency === 'immediate') {

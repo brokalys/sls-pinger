@@ -1,8 +1,8 @@
-import moment from 'moment';
-import * as db from './db';
-import generateChart from './generate-chart';
+const moment = require('moment');
+const db = require('./db');
+const generateChart = require('./generate-chart');
 
-export default async function generatePingerCharts(pingers) {
+module.exports = async function generatePingerCharts(pingers) {
   const pingerIds = pingers.map(({ id }) => id);
   const pingerHashMap = pingers.reduce(
     (carry, pinger) => ({ ...carry, [pinger.id]: pinger }),
@@ -82,7 +82,7 @@ export default async function generatePingerCharts(pingers) {
     (carry, url, index) => ({ ...carry, [idsWithCharts[index]]: url }),
     {},
   );
-}
+};
 
 function mapPingerFrequencyToMomentJs(frequency) {
   switch (frequency) {

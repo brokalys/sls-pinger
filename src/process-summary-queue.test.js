@@ -1,11 +1,11 @@
-import * as db from './shared/db';
-import generatePingerCharts from './shared/generate-pinger-charts';
-import sns from './shared/sns';
-import { run } from './process-summary-queue';
-import {
+const db = require('./shared/db');
+const generatePingerCharts = require('./shared/generate-pinger-charts');
+const sns = require('./shared/sns');
+const { run } = require('./process-summary-queue');
+const {
   createPingerFixture,
   createPropertyQueueItemFixture,
-} from '__fixtures__';
+} = require('__fixtures__');
 
 jest.mock('./shared/db');
 jest.mock('./shared/generate-pinger-charts', () =>
