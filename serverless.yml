@@ -6,8 +6,10 @@ package:
   exclude:
     - '**/*'
   include:
-    - src/shared/*
+    - src/shared/**
     - '!src/shared/*.test.js'
+    - '!**/__mocks__/**'
+    - '!**/__snapshots__/**'
 
 provider:
   name: aws
