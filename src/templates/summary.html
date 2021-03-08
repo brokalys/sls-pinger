@@ -287,13 +287,14 @@
                       style="text-align: right"
                     >
                       <tr>
-                        <th>Cena</th>
+                        <th colspan="2">Cena</th>
                         <th>Istabas</th>
                         <th>Platība</th>
                       </tr>
                       {{#each properties}}
                       <tr style="border-bottom: 1px solid #cccccc">
                         <td>{{ this.[1] }} EUR</td>
+                        <td>{{ this.[4] }} EUR/m<sup>2</sup></td>
                         <td>{{ this.[2] }}</td>
                         <td>{{ this.[3] }} m2</td>
                         <td>
@@ -302,10 +303,10 @@
                       </tr>
                       {{/each}} {{#if limit_reached}}
                       <tr>
-                        <td colspan="4" style="text-align: center">...</td>
+                        <td colspan="5" style="text-align: center">...</td>
                       </tr>
                       <tr>
-                        <th colspan="4" style="text-align: center">
+                        <th colspan="5" style="text-align: center">
                           {{#if is_premium}} Diemžēl, e-pasta izmēra dēļ,
                           nevaram pievienot visus sludinājumus. Maksimālais, cik
                           varam pievienot, ir 500 sludinājumi. {{else}}

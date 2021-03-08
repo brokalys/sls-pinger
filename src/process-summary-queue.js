@@ -109,7 +109,13 @@ function sendEmail(context, pinger, properties, heroImgUrl) {
             unsubscribe_url: createUnsubscribeLink(pinger),
             properties: properties
               .splice(0, propertyLimit)
-              .map((data) => [data.url, data.price, data.rooms, data.area]),
+              .map((data) => [
+                data.url,
+                data.price,
+                data.rooms,
+                data.area,
+                data.calc_price_per_sqm,
+              ]),
           }),
         },
       },

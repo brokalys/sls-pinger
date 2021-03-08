@@ -1,8 +1,11 @@
 const fs = require('fs');
 const Handlebars = require('handlebars');
+const NumeralHelper = require('handlebars.numeral');
 const { minify } = require('html-minifier');
 const db = require('./shared/db');
 const ses = require('./shared/ses');
+
+NumeralHelper.registerHelpers(Handlebars);
 
 exports.run = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
