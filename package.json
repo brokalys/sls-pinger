@@ -18,7 +18,6 @@
     "handlebars.numeral": "^0.2.0",
     "html-minifier": "^4.0.0",
     "moment": "^2.24.0",
-    "numeral": "^2.0.6",
     "point-in-polygon": "^1.0.1",
     "serverless-mysql": "^1.5.3",
     "vega": "^5.19.1"

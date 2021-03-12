@@ -10,7 +10,7 @@ Object {
   "is_premium": true,
   "lat": 56.9965,
   "lng": 24.245176,
-  "price": "100,000",
+  "price": 100000,
   "rooms": 2,
   "type": "sell",
   "unsubscribe_url": "https://unsubscribe.brokalys.com/?key=undefined&id=111111",

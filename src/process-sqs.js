@@ -1,4 +1,3 @@
-const numeral = require('numeral');
 const inside = require('point-in-polygon');
 const db = require('./shared/db');
 const sns = require('./shared/sns');
@@ -113,7 +112,6 @@ exports.run = async (event, context) => {
         result.url = `https://view.brokalys.com/?link=${encodeURIComponent(
           result.url,
         )}`;
-        result.price = numeral(result.price).format('0,0 €');
         result.is_premium = !!pinger.is_premium;
 
         return {

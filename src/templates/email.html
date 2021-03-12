@@ -302,10 +302,10 @@
                     </h1>
                     <p style="margin: 0 0 10px 0">
                       <strong>Cena:</strong>
-                      {{ price }} EUR
+                      {{ number price "0,0" }} EUR
                       <span>
                         {{#if calc_price_per_sqm}} ({{ number calc_price_per_sqm
-                        }} EUR/m<sup>2</sup>) {{/if}}
+                        "0,0" }} EUR/m<sup>2</sup>) {{/if}}
                       </span>
                     </p>
                     {{#if rooms}}
