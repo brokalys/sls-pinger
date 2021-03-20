@@ -106,6 +106,7 @@ exports.run = async (event, context) => {
         result.images = parseImages(result.images);
         result.content = nl2br(
           (result.content || '').replace(/(<([^>]+)>)/gi, ''),
+          false,
         );
 
         result.unsubscribe_url = createUnsubscribeLink(pinger);
