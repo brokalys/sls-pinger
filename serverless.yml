@@ -53,7 +53,7 @@ functions:
     name: BrokalysPinger-Email-${self:provider.stage}
     description: Send email and log it.
     reservedConcurrency: 4
-    timeout: 10
+    timeout: 3
     handler: src/email.run
     package:
       include:
@@ -73,8 +73,8 @@ functions:
         threshold: 1
         statistic: Sum
         period: 300 # 5 minutes
-        evaluationPeriods: 2
-        datapointsToAlarm: 2
+        evaluationPeriods: 10
+        datapointsToAlarm: 5
         comparisonOperator: GreaterThanOrEqualToThreshold
         treatMissingData: notBreaching
       - name: emailInvocations
