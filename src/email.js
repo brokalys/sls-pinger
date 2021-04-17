@@ -31,6 +31,7 @@ exports.run = async (event, context, callback) => {
     html: minify(html, {
       collapseWhitespace: true,
       minifyCSS: true,
+      removeComments: true,
     }),
     replyTo: 'Matiss <matiss@brokalys.com>',
   };

@@ -2,13 +2,16 @@ const moment = require('moment');
 const db = require('./db');
 const generateChart = require('./generate-chart');
 
-module.exports = async function generatePingerCharts(pingers) {
+module.exports = async function generatePingerCharts(
+  pingers,
+  frequency = 'daily',
+) {
   const pingerIds = pingers.map(({ id }) => id);
   const pingerHashMap = pingers.reduce(
     (carry, pinger) => ({ ...carry, [pinger.id]: pinger }),
     {},
   );
-  const stats = await db.getPropertyStats(pingerIds);
+  const stats = await db.getPropertyStats(pingerIds, frequency);
 
   const state = {
     ids: [],

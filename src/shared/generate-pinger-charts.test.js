@@ -22,7 +22,7 @@ describe('generate-pinger-charts', () => {
 
     const urls = await generatePingerCharts([createPingerFixture()]);
 
-    expect(db.getPropertyStats).toBeCalledWith([1]);
+    expect(db.getPropertyStats).toBeCalledWith([1], 'daily');
     expect(urls).toEqual({
       1: expect.any(String),
     });
@@ -41,7 +41,7 @@ describe('generate-pinger-charts', () => {
       createPingerFixture({ id: 2 }),
     ]);
 
-    expect(db.getPropertyStats).toBeCalledWith([1, 2]);
+    expect(db.getPropertyStats).toBeCalledWith([1, 2], 'daily');
     expect(urls).toEqual({
       1: expect.any(String),
       2: expect.any(String),
@@ -60,7 +60,7 @@ describe('generate-pinger-charts', () => {
       createPingerFixture({ id: 2 }),
     ]);
 
-    expect(db.getPropertyStats).toBeCalledWith([1, 2]);
+    expect(db.getPropertyStats).toBeCalledWith([1, 2], 'daily');
     expect(urls).toEqual({
       1: expect.any(String),
     });
@@ -74,7 +74,7 @@ describe('generate-pinger-charts', () => {
       createPingerFixture({ id: 2 }),
     ]);
 
-    expect(db.getPropertyStats).toBeCalledWith([1, 2]);
+    expect(db.getPropertyStats).toBeCalledWith([1, 2], 'daily');
     expect(urls).toEqual({});
   });
 

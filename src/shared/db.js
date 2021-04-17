@@ -191,12 +191,23 @@ function queuePingerForSummaryEmail(pingerId, data) {
   });
 }
 
-function getPropertyStats(pingerIds) {
+function getPropertyStats(pingerIds, frequency) {
+  let identifier = 'DAY';
+
+  switch (frequency) {
+    case 'weekly':
+      identifier = 'WEEK';
+      break;
+    case 'monthly':
+      identifier = 'MONTH';
+      break;
+  }
+
   return connection.query({
     sql: `
       SELECT *
       FROM pinger_property_stats
-      WHERE created_at >= DATE_ADD(CURDATE(), INTERVAL -12 DAY)
+      WHERE created_at >= DATE_ADD(CURDATE(), INTERVAL -12 ${identifier})
         AND pinger_id IN (?)
       ORDER BY created_at DESC
    `,
