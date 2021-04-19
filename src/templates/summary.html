@@ -298,13 +298,20 @@
                         <td>
                           <a href="{{ this.[0] }}">Atvērt</a>
                         </td>
+                        <td>
+                          <a
+                            href="{{ this.[5] }}"
+                            title="Skatīt sludinājumu vēsturi"
+                            >Vēsture</a
+                          >
+                        </td>
                       </tr>
                       {{/each}} {{#if limit_reached}}
                       <tr>
-                        <td colspan="5" style="text-align: center">...</td>
+                        <td colspan="6" style="text-align: center">...</td>
                       </tr>
                       <tr>
-                        <th colspan="5" style="text-align: center">
+                        <th colspan="6" style="text-align: center">
                           {{#if is_premium}} Diemžēl, e-pasta izmēra dēļ,
                           nevaram pievienot visus sludinājumus. Maksimālais, cik
                           varam pievienot, ir 500 sludinājumi. {{else}}

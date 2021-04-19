@@ -115,6 +115,7 @@ function sendEmail(context, pinger, properties, heroImgUrl) {
                 data.rooms,
                 data.area,
                 data.calc_price_per_sqm,
+                `https://map.brokalys.com/#/${data.lat},${data.lng},18/locate-building`,
               ]),
           }),
         },
