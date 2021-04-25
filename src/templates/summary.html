@@ -298,6 +298,8 @@
                         <td>
                           <a href="{{ this.[0] }}">Atvērt</a>
                         </td>
+
+                        {{#if this.[5]}}
                         <td>
                           <a
                             href="{{ this.[5] }}"
@@ -305,6 +307,7 @@
                             >Vēsture</a
                           >
                         </td>
+                        {{/if}}
                       </tr>
                       {{/each}} {{#if limit_reached}}
                       <tr>
