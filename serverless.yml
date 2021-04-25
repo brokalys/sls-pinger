@@ -3,11 +3,11 @@ useDotenv: true
 
 package:
   individually: true
-  exclude:
-    - '**/*'
-  include:
+  patterns:
+    - '!**/*'
     - src/shared/**
     - '!src/shared/*.test.js'
+    - '!**/__fixtures__/**'
     - '!**/__mocks__/**'
     - '!**/__snapshots__/**'
 
@@ -56,7 +56,7 @@ functions:
     timeout: 3
     handler: src/email.run
     package:
-      include:
+      patterns:
         - src/email.js
         - src/templates/*
         - src/test/email.json
@@ -95,7 +95,7 @@ functions:
     timeout: 3
     handler: src/limit-locker.run
     package:
-      include:
+      patterns:
         - src/limit-locker.js
     events:
       - schedule:
@@ -118,7 +118,7 @@ functions:
     description: Process SQS to trigger pinger email sending.
     handler: src/process-sqs.run
     package:
-      include:
+      patterns:
         - src/process-sqs.js
         - src/test/process-sqs.json
     reservedConcurrency: 5
@@ -135,7 +135,7 @@ functions:
     description: Process pinger summary queue
     handler: src/process-summary-queue.run
     package:
-      include:
+      patterns:
         - src/process-summary-queue.js
     reservedConcurrency: 1
     events:
