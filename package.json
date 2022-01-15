@@ -9,8 +9,8 @@
     "build": "serverless package",
     "test": "jest",
     "lint": "eslint .",
-    "deploy": "serverless deploy",
-    "deploy:ci": "yarn deploy --conceal --stage prod",
+    "deploy": "serverless deploy --stage staging",
+    "deploy:ci": "serverless deploy --conceal --stage prod",
     "postinstall": "husky install"
   },
   "dependencies": {
