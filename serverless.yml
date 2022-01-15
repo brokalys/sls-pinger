@@ -193,7 +193,7 @@ custom:
   serverless-layers:
     packageManager: yarn
     dependenciesPath: ./package.json
-    layersDeploymentBucket: ${self:provider.stage}-brokalys-lambda-layers
+    layersDeploymentBucket: brokalys-lambda-layers
     customInstallationCommand: yarn install --production --ignore-scripts
 
 plugins:
