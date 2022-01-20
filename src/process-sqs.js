@@ -115,7 +115,7 @@ exports.run = async (event, context) => {
         )}`;
         result.map_url =
           result.category !== 'land'
-            ? `https://map.brokalys.com/#/${result.lat},${result.lng},18/locate-building`
+            ? `https://brokalys.com/#/${result.lat},${result.lng},18/locate-building`
             : undefined;
         result.is_premium = !!pinger.is_premium;
 

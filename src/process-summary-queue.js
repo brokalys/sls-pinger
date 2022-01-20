@@ -119,7 +119,7 @@ function sendEmail(context, pinger, properties, heroImgUrl) {
                 data.area,
                 data.calc_price_per_sqm,
                 data.category !== 'land'
-                  ? `https://map.brokalys.com/#/${data.lat},${data.lng},18/locate-building`
+                  ? `https://brokalys.com/#/${data.lat},${data.lng},18/locate-building`
                   : undefined,
               ]),
           }),

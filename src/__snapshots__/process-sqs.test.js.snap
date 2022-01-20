@@ -10,7 +10,7 @@ Object {
   "is_premium": true,
   "lat": 56.9965,
   "lng": 24.245176,
-  "map_url": "https://map.brokalys.com/#/56.9965,24.245176,18/locate-building",
+  "map_url": "https://brokalys.com/#/56.9965,24.245176,18/locate-building",
   "price": 100000,
   "rooms": 2,
   "type": "sell",
