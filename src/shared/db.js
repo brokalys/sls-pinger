@@ -105,7 +105,7 @@ async function getEmailsWithLimitLockerNotification(emails) {
           AND pl.email_type = ?
         GROUP BY pl.to
       `,
-      values: [startOfMonth, 'limit-notification'],
+      values: [startOfMonth, 'limit-notification-email'],
     })
   ).map((row) => row.to);
 }
