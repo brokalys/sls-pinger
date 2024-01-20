@@ -16,9 +16,8 @@ exports.run = async (event, context) => {
   await db.limitLockPingerEmails(lockedEmails);
 
   // Emails that have received limit-locker notification email
-  const limitNotificationEmails = await db.getEmailsWithLimitLockerNotification(
-    lockedEmails,
-  );
+  const limitNotificationEmails =
+    await db.getEmailsWithLimitLockerNotification(lockedEmails);
 
   // Filter emails that have NOT received the notification
   const emails = lockedEmails.filter(
