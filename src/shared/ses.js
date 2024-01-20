@@ -1,3 +1,9 @@
-const AWS = require('aws-sdk');
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 
-module.exports = new AWS.SES({ region: process.env.AWS_REGION });
+const client = new SESClient({ region: process.env.AWS_REGION });
+
+module.exports = {
+  sendEmail: function (message) {
+    return client.send(new SendEmailCommand(message));
+  },
+};

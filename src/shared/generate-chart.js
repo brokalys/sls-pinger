@@ -13,14 +13,12 @@ module.exports = async function generateChart(fileName, values, maxDate) {
   const svgStr = await view.toSVG();
   const bucketName = `${process.env.STAGE}-pinger-charts`;
 
-  await s3
-    .putObject({
-      Bucket: bucketName,
-      Key: fileName,
-      Body: svgStr,
-      ContentType: 'image/svg+xml',
-    })
-    .promise();
+  await s3.putObject({
+    Bucket: bucketName,
+    Key: fileName,
+    Body: svgStr,
+    ContentType: 'image/svg+xml',
+  });
 
   return `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 };

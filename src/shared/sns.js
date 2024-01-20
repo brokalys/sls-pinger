@@ -1,5 +1,9 @@
-const AWS = require('aws-sdk');
+const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns');
 
-AWS.config.update({ region: process.env.AWS_REGION });
+const client = new SNSClient({ region: process.env.AWS_REGION });
 
-module.exports = new AWS.SNS({ apiVersion: '2010-03-31' });
+module.exports = {
+  publish: function (message) {
+    return client.send(new PublishCommand(message));
+  },
+};

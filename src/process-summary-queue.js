@@ -83,50 +83,48 @@ exports.run = async (event, context) => {
 function sendEmail(context, pinger, properties, heroImgUrl) {
   const propertyLimit = pinger.is_premium ? PREMIUM_LIMIT : FREE_LIMIT;
 
-  return sns
-    .publish({
-      Message: 'email',
-      MessageAttributes: {
-        to: {
-          DataType: 'String',
-          StringValue: pinger.email,
-        },
-        subject: {
-          DataType: 'String',
-          StringValue: 'Jauni PINGER sludinājumi',
-        },
-        pinger_id: {
-          DataType: 'Number',
-          StringValue: String(pinger.id),
-        },
-        template_id: {
-          DataType: 'String',
-          StringValue: 'summary',
-        },
-        template_variables: {
-          DataType: 'String',
-          StringValue: JSON.stringify({
-            is_premium: pinger.is_premium,
-            limit_reached: properties.length > propertyLimit,
-            hero_img_url: heroImgUrl,
-            unsubscribe_url: createUnsubscribeLink(pinger),
-            properties: properties
-              .splice(0, propertyLimit)
-              .map((data) => [
-                data.url,
-                data.price,
-                data.rooms,
-                data.area,
-                data.calc_price_per_sqm,
-                data.category !== 'land'
-                  ? `https://brokalys.com/#/${data.lat},${data.lng},18/locate-building`
-                  : undefined,
-              ]),
-          }),
-        },
+  return sns.publish({
+    Message: 'email',
+    MessageAttributes: {
+      to: {
+        DataType: 'String',
+        StringValue: pinger.email,
       },
-      MessageStructure: 'string',
-      TargetArn: utils.constructArn(context, process.env.EMAIL_SNS_TOPIC_NAME),
-    })
-    .promise();
+      subject: {
+        DataType: 'String',
+        StringValue: 'Jauni PINGER sludinājumi',
+      },
+      pinger_id: {
+        DataType: 'Number',
+        StringValue: String(pinger.id),
+      },
+      template_id: {
+        DataType: 'String',
+        StringValue: 'summary',
+      },
+      template_variables: {
+        DataType: 'String',
+        StringValue: JSON.stringify({
+          is_premium: pinger.is_premium,
+          limit_reached: properties.length > propertyLimit,
+          hero_img_url: heroImgUrl,
+          unsubscribe_url: createUnsubscribeLink(pinger),
+          properties: properties
+            .splice(0, propertyLimit)
+            .map((data) => [
+              data.url,
+              data.price,
+              data.rooms,
+              data.area,
+              data.calc_price_per_sqm,
+              data.category !== 'land'
+                ? `https://brokalys.com/#/${data.lat},${data.lng},18/locate-building`
+                : undefined,
+            ]),
+        }),
+      },
+    },
+    MessageStructure: 'string',
+    TargetArn: utils.constructArn(context, process.env.EMAIL_SNS_TOPIC_NAME),
+  });
 }

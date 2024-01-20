@@ -19,11 +19,13 @@
     "html-minifier": "^4.0.0",
     "moment": "^2.24.0",
     "point-in-polygon": "^1.0.1",
-    "serverless-mysql": "^1.5.3",
+    "serverless-mysql": "^1.5.5",
     "vega": "^5.19.1"
   },
   "devDependencies": {
-    "aws-sdk": "^2.151.0",
+    "@aws-sdk/client-s3": "^3.496.0",
+    "@aws-sdk/client-ses": "^3.496.0",
+    "@aws-sdk/client-sns": "^3.496.0",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -32,9 +34,9 @@
     "jest-canvas-mock": "^2.3.0",
     "lint-staged": ">=10",
     "prettier": "^2.0.1",
-    "serverless": "^2.23.0",
-    "serverless-layers": "^2.3.3",
-    "serverless-plugin-aws-alerts": "^1.7.1"
+    "serverless": "^3.38.0",
+    "serverless-layers": "^2.7.0",
+    "serverless-plugin-aws-alerts": "^1.7.5"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix"

@@ -46,24 +46,22 @@ exports.run = async (event, context, callback) => {
     property_id: templateVariables.propertyId || null,
   });
 
-  await ses
-    .sendEmail({
-      Destination: {
-        ToAddresses: [data.to],
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: data.html,
-          },
+  await ses.sendEmail({
+    Destination: {
+      ToAddresses: [data.to],
+    },
+    Message: {
+      Body: {
+        Html: {
+          Charset: 'UTF-8',
+          Data: data.html,
         },
-        Subject: { Data: data.subject },
       },
-      ReplyToAddresses: [data.replyTo],
-      Source: data.from,
-    })
-    .promise();
+      Subject: { Data: data.subject },
+    },
+    ReplyToAddresses: [data.replyTo],
+    Source: data.from,
+  });
 
   await db.updatePingerAttemptTimestamp(insertId);
 };

@@ -140,35 +140,33 @@ function performAction(data, context) {
 }
 
 function publishSns(data, context) {
-  return sns
-    .publish({
-      Message: 'email',
-      MessageAttributes: {
-        to: {
-          DataType: 'String',
-          StringValue: data.to,
-        },
-        subject: {
-          DataType: 'String',
-          StringValue: 'Jauns PINGER sludinājums',
-        },
-        pinger_id: {
-          DataType: 'Number',
-          StringValue: String(data.pinger_id),
-        },
-        template_id: {
-          DataType: 'String',
-          StringValue: data.template_id,
-        },
-        template_variables: {
-          DataType: 'String',
-          StringValue: JSON.stringify(data.template_variables),
-        },
+  return sns.publish({
+    Message: 'email',
+    MessageAttributes: {
+      to: {
+        DataType: 'String',
+        StringValue: data.to,
       },
-      MessageStructure: 'string',
-      TargetArn: utils.constructArn(context, process.env.EMAIL_SNS_TOPIC_NAME),
-    })
-    .promise();
+      subject: {
+        DataType: 'String',
+        StringValue: 'Jauns PINGER sludinājums',
+      },
+      pinger_id: {
+        DataType: 'Number',
+        StringValue: String(data.pinger_id),
+      },
+      template_id: {
+        DataType: 'String',
+        StringValue: data.template_id,
+      },
+      template_variables: {
+        DataType: 'String',
+        StringValue: JSON.stringify(data.template_variables),
+      },
+    },
+    MessageStructure: 'string',
+    TargetArn: utils.constructArn(context, process.env.EMAIL_SNS_TOPIC_NAME),
+  });
 }
 
 function queuePinger(data) {

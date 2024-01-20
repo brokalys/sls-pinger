@@ -32,30 +32,28 @@ exports.run = async (event, context) => {
   // Send all the emails
   await Promise.all(
     emails.map((email) => {
-      sns
-        .publish({
-          Message: 'email',
-          MessageAttributes: {
-            to: {
-              DataType: 'String',
-              StringValue: email,
-            },
-            subject: {
-              DataType: 'String',
-              StringValue: 'Brokalys ikmēneša e-pastu limits ir sasniegts',
-            },
-            template_id: {
-              DataType: 'String',
-              StringValue: 'limit-notification-email',
-            },
+      sns.publish({
+        Message: 'email',
+        MessageAttributes: {
+          to: {
+            DataType: 'String',
+            StringValue: email,
           },
-          MessageStructure: 'string',
-          TargetArn: utils.constructArn(
-            context,
-            process.env.EMAIL_SNS_TOPIC_NAME,
-          ),
-        })
-        .promise();
+          subject: {
+            DataType: 'String',
+            StringValue: 'Brokalys ikmēneša e-pastu limits ir sasniegts',
+          },
+          template_id: {
+            DataType: 'String',
+            StringValue: 'limit-notification-email',
+          },
+        },
+        MessageStructure: 'string',
+        TargetArn: utils.constructArn(
+          context,
+          process.env.EMAIL_SNS_TOPIC_NAME,
+        ),
+      });
     }),
   );
 };
