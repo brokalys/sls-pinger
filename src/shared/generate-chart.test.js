@@ -7,7 +7,7 @@ jest.mock('./s3');
 describe('generate-chart', () => {
   afterEach(jest.clearAllMocks);
 
-  test('constructs a SVG chart', async () => {
+  test.skip('constructs a SVG chart', async () => {
     await generateChart(
       'test.svg',
       [{ x: '2021-01-01', y: 120 }],

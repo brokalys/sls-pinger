@@ -1,7 +1,7 @@
 const inside = require('point-in-polygon');
 const db = require('./shared/db');
 const sns = require('./shared/sns');
-const createUnsubscribeLink = require('./shared/unsubscribe-link');
+const { unsubscribeLink, allPingersLink } = require('./shared/pinger-link');
 const utils = require('./shared/utils');
 
 function parseLocation(location) {
@@ -109,7 +109,8 @@ exports.run = async (event, context) => {
           false,
         );
 
-        result.unsubscribe_url = createUnsubscribeLink(pinger);
+        result.unsubscribe_url = unsubscribeLink(pinger);
+        result.all_pingers_url = allPingersLink(pinger);
         result.url = `https://view.brokalys.com/?link=${encodeURIComponent(
           result.url,
         )}`;
