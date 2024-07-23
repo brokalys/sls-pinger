@@ -200,7 +200,7 @@ describe('process-summary-queue', () => {
     );
   });
 
-  test.each(['is_premium', 'unsubscribe_url', 'properties'])(
+  test.each(['is_premium', 'unsubscribe_url', 'all_pingers_url', 'properties'])(
     'adds the required template_variables field: %j',
     async (field) => {
       db.getPingersByFrequency.mockReturnValue([createPingerFixture()]);

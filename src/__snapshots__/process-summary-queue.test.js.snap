@@ -28,7 +28,7 @@ Array [
       },
       "template_variables": Object {
         "DataType": "String",
-        "StringValue": "{\\"is_premium\\":true,\\"limit_reached\\":false,\\"unsubscribe_url\\":\\"https://unsubscribe.brokalys.com/?key=undefined&id=c8bf6e7b-7eba-11eb-b2a8-663c33f40218\\",\\"properties\\":[[\\"https://brokalys.com/\\",100000,2,45,122.32,\\"https://brokalys.com/#/56.9965,24.245176,18/locate-building\\"],[\\"https://brokalys.com/\\",100000,2,45,122.32,\\"https://brokalys.com/#/56.9965,24.245176,18/locate-building\\"],[\\"https://brokalys.com/\\",100000,2,45,122.32,\\"https://brokalys.com/#/56.9965,24.245176,18/locate-building\\"]]}",
+        "StringValue": "{\\"is_premium\\":true,\\"limit_reached\\":false,\\"unsubscribe_url\\":\\"https://unsubscribe.brokalys.com/?key=XXXXXXXX-7eba-11eb-XXXX-663c33f40218&id=c8bf6e7b-7eba-11eb-b2a8-663c33f40218\\",\\"all_pingers_url\\":\\"https://pinger.brokalys.com/#/pingers/c8bf6e7b-7eba-11eb-b2a8-663c33f40218,XXXXXXXX-7eba-11eb-XXXX-663c33f40218\\",\\"properties\\":[[\\"https://brokalys.com/\\",100000,2,45,122.32,\\"https://brokalys.com/#/56.9965,24.245176,18/locate-building\\"],[\\"https://brokalys.com/\\",100000,2,45,122.32,\\"https://brokalys.com/#/56.9965,24.245176,18/locate-building\\"],[\\"https://brokalys.com/\\",100000,2,45,122.32,\\"https://brokalys.com/#/56.9965,24.245176,18/locate-building\\"]]}",
       },
       "to": Object {
         "DataType": "String",

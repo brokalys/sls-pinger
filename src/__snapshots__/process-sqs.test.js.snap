@@ -2,6 +2,7 @@
 
 exports[`process-sqs works with multiple PINGERs w/ multi-invocation frequencies 1`] = `
 Object {
+  "all_pingers_url": "https://pinger.brokalys.com/#/pingers/111111,XXXXXXXX-7eba-11eb-XXXX-663c33f40218",
   "area": 45,
   "calc_price_per_sqm": 122.32,
   "category": "apartment",
@@ -14,7 +15,7 @@ Object {
   "price": 100000,
   "rooms": 2,
   "type": "sell",
-  "unsubscribe_url": "https://unsubscribe.brokalys.com/?key=undefined&id=111111",
+  "unsubscribe_url": "https://unsubscribe.brokalys.com/?key=XXXXXXXX-7eba-11eb-XXXX-663c33f40218&id=111111",
   "url": "https://view.brokalys.com/?link=https%3A%2F%2Fbrokalys.com%2F",
 }
 `;

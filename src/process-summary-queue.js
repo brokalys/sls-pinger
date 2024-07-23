@@ -1,7 +1,7 @@
 const db = require('./shared/db');
 const generatePingerCharts = require('./shared/generate-pinger-charts');
 const sns = require('./shared/sns');
-const createUnsubscribeLink = require('./shared/unsubscribe-link');
+const { unsubscribeLink, allPingersLink } = require('./shared/pinger-link');
 const utils = require('./shared/utils');
 
 const FREE_LIMIT = 100;
@@ -108,7 +108,8 @@ function sendEmail(context, pinger, properties, heroImgUrl) {
           is_premium: pinger.is_premium,
           limit_reached: properties.length > propertyLimit,
           hero_img_url: heroImgUrl,
-          unsubscribe_url: createUnsubscribeLink(pinger),
+          unsubscribe_url: unsubscribeLink(pinger),
+          all_pingers_url: allPingersLink(pinger),
           properties: properties
             .splice(0, propertyLimit)
             .map((data) => [
