@@ -134,6 +134,7 @@ functions:
     name: BrokalysPinger-ProcessSummaryQueue-${self:provider.stage}
     description: Process pinger summary queue
     handler: src/process-summary-queue.run
+    timeout: 10
     package:
       patterns:
         - src/process-summary-queue.js
